@@ -1,7 +1,7 @@
 import {Component, OnInit} from "angular2/core";
 import {FileInfo, BrowseService} from "./browse.service";
 import {LinksTableComponent} from "./links-table.component";
-import {FilterPipe} from "../pipes/filter.pipe";
+import {FilterPipe} from "../pipes/filter-func.pipe";
 
 @Component({
     template: `
@@ -11,7 +11,7 @@ import {FilterPipe} from "../pipes/filter.pipe";
                 <input type="checkbox" [(ngModel)]="showWithoutLinksOnly"/>Show without links only
             </label>
         </div>
-        <ms-links-table [files]="allFiles | filter:filterFile:showWithoutLinksOnly"></ms-links-table>
+        <ms-links-table [files]="allFiles | filterFunc:filterFile:showWithoutLinksOnly"></ms-links-table>
     </form>
     `,
     pipes: [FilterPipe],
@@ -25,7 +25,7 @@ export class BrowseComponent implements OnInit {
     constructor(private _browseService: BrowseService) {        
     }
     
-    private filterFile(f: FileInfo, showWithoutLinksOnly: boolean) {        
+    private filterFile(f: FileInfo, showWithoutLinksOnly: boolean) {
         return !showWithoutLinksOnly || !f.links || f.links.length == 0;
     }
     

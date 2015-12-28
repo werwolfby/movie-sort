@@ -8,10 +8,10 @@ import {FilterPipe} from "../pipes/filter-func.pipe";
     <form>
         <div className="checkbox">
             <label>
-                <input type="checkbox" [(ngModel)]="showWithoutLinksOnly"/>Show without links only
+                <input type="checkbox" [ngModel]="showWithoutLinksOnly" (ngModelChange)="showWithoutLinksOnly = $event; updateFilteredFiles()"/>Show without links only
             </label>
         </div>
-        <ms-links-table [files]="allFiles | filterFunc:filterFile:showWithoutLinksOnly"></ms-links-table>
+        <ms-links-table [files]="filteredFiles"></ms-links-table>
     </form>
     `,
     pipes: [FilterPipe],
@@ -21,15 +21,20 @@ import {FilterPipe} from "../pipes/filter-func.pipe";
 export class BrowseComponent implements OnInit {
     showWithoutLinksOnly = true;    
     allFiles: FileInfo[] = [];
-    
+    filteredFiles: FileInfo[] = [];
+
     constructor(private _browseService: BrowseService) {        
     }
     
-    private filterFile(f: FileInfo, showWithoutLinksOnly: boolean) {
-        return !showWithoutLinksOnly || !f.links || f.links.length == 0;
+    private updateFilteredFiles() {
+        if (this.showWithoutLinksOnly) {
+            this.filteredFiles = this.allFiles.filter(f => !f.links || f.links.length == 0);
+        } else {
+            this.filteredFiles = this.allFiles;
+        }
     }
     
     ngOnInit() {
-        this._browseService.getFiles().then(files => this.allFiles = files);
+        this._browseService.getFiles().then(files => this.allFiles = files).then(() => this.updateFilteredFiles());
     }
 }

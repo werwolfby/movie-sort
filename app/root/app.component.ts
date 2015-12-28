@@ -1,6 +1,5 @@
 import {Component}   from "angular2/core";
-import {JsonPipe}   from "angular2/common";
-import {RouteConfig, Router, ROUTER_DIRECTIVES} from "angular2/router";
+import {RouteConfig, Location, ROUTER_DIRECTIVES} from "angular2/router";
 import {BrowseComponent} from "../browse/browse.component";
 import {LogsComponent}   from "../logs/logs.component";
 
@@ -14,8 +13,8 @@ import {LogsComponent}   from "../logs/logs.component";
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a [routerLink]="['Browse']">Browse</a></li>
-                    <li><a [routerLink]="['Logs']">Logs</a></li>
+                    <li [class.active]="isLocationStartsWith('/browse')"><a [routerLink]="['Browse']">Browse</a></li>
+                    <li [class.active]="isLocationStartsWith('/logs')"><a [routerLink]="['Logs']">Logs</a></li>
                     <li><a>Execute</a></li>
                 </ul>
             </div>
@@ -31,13 +30,16 @@ import {LogsComponent}   from "../logs/logs.component";
     </div>    
     `,
     directives: [ROUTER_DIRECTIVES],
-    pipes: [JsonPipe],
 })
 @RouteConfig([
     {path: '/browse', name: 'Browse', component: BrowseComponent, useAsDefault: true},
     {path: '/logs',   name: 'Logs',   component: LogsComponent},
 ])
 export class AppComponent {
-    constructor(public currentRouter: Router) {
+    constructor(private _location: Location) {
+    }
+    
+    isLocationStartsWith(path: string) {
+        return this._location.path().startsWith(path);
     }
 }

@@ -35,6 +35,10 @@ export class BrowseComponent implements OnInit {
     }
     
     ngOnInit() {
-        this._browseService.getFiles().then(files => this.allFiles = files).then(() => this.updateFilteredFiles());
+        this._browseService.getFiles()
+            .subscribe(files => {
+                this.allFiles = files; 
+                this.updateFilteredFiles()
+            });
     }
 }

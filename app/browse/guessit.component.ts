@@ -1,5 +1,5 @@
 import {Component, Input} from "angular2/core";
-import {FileInfo} from "./browse.service";
+import {FileLinkInfo} from "./browse.service";
 import {GuessitService, GuessitResult} from "./guessit.service";
 import {TooltipDirective} from "../directives/tooltip.directive";
 
@@ -18,7 +18,7 @@ import {TooltipDirective} from "../directives/tooltip.directive";
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 <span>Cancel</span>
             </button>
-            <span>{{file.new_links[0]}}</span>
+            <span>{{file.new_links[0].folder}}/{{file.new_links[0].name}}</span>
             <button (click)="link()" class="btn btn-success btn-xs" type="submit">
                 <span class="glyphicon glyphicon-ok"     aria-hidden="true"></span>
                 <span>Link</span>
@@ -30,7 +30,7 @@ import {TooltipDirective} from "../directives/tooltip.directive";
     directives: [TooltipDirective]
 })
 export class GuessItCompoenent {
-    @Input() file: FileInfo;
+    @Input() file: FileLinkInfo;
     state: number = 0;
     
     constructor(private _guessitService: GuessitService) {
@@ -54,13 +54,12 @@ export class GuessItCompoenent {
                 folder = ["/movie"];
                 break;
         }
-        folder.push(this.file.name);
         
         if (!this.file.new_links) {
             this.file.new_links = [];
         }
         
-        this.file.new_links.push(folder.join("/"));
+        this.file.new_links.push({folder: folder.join("/"), name: this.file.name});
     }
     
     link() {

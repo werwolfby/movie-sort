@@ -12,7 +12,7 @@ import {GuessItCompoenent} from "./guessit.component";
         </tr>
         <tr *ngFor="#file of files">
             <td width="50%">{{file.folder}}/{{file.name}}</td>
-            <td width="50%" *ngIf="file.links && file.links.length > 0"><div *ngFor="#link of file.links">{{link}}</div></td>
+            <td width="50%" *ngIf="file.links && file.links.length > 0"><div *ngFor="#link of file.links">{{link.folder}}/{{link.name}}</div></td>
             <td width="50%" *ngIf="!file.links || file.links.length == 0"><ms-guess-it [file]="file"></ms-guess-it></td>
         </tr>
     </table>

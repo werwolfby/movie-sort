@@ -6,7 +6,11 @@ import {Observable} from "rxjs"
 export interface FileInfo {
     folder: string;
     name: string;
-    links: string[];
+}
+
+export interface FileLinkInfo extends FileInfo {
+    links: FileInfo[];
+    new_links: FileInfo[];
 }
 
 @Injectable()
@@ -14,9 +18,9 @@ export class BrowseService {
     constructor(private _http: Http) {
     }
     
-    getFiles() {
+    getFiles() : Observable<FileLinkInfo[]> {
         return this._http
             .get("api/files.json")
-            .map(r => <FileInfo[]> r.json());
+            .map(r => <FileLinkInfo[]> r.json());
     }
 }

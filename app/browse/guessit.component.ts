@@ -10,12 +10,10 @@ import {TooltipDirective} from "../directives/tooltip.directive";
         <template [ngSwitchWhen]="0"><a (click)="guessit()">Guess It</a></template>
         <template [ngSwitchWhen]="1">...loading...</template>
         <template [ngSwitchWhen]="2">
-            <a (click)="edit()" tooltip data-toggle="tooltip" data-placement="bottom" title="Edit">
-                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-            </a>
-            <a (click)="cancel()">(cancel)</a>
-            {{file.new_links[0]}}
-            <a (click)="link()">(link)</a>               
+            <span (click)="edit()"   tooltip data-toggle="tooltip" data-placement="bottom" title="Edit"   class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            <span (click)="cancel()" tooltip data-toggle="tooltip" data-placement="bottom" title="Cancel" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <span>{{file.new_links[0]}}</span>
+            <span (click)="link()"   tooltip data-toggle="tooltip" data-placement="bottom" title="Link"   class="glyphicon glyphicon-ok"     aria-hidden="true"></span>
         </template>
     </div>
     `,

@@ -1,6 +1,7 @@
 import {Component, Input} from "angular2/core";
 import {FileInfo} from "./browse.service";
 import {GuessitService, GuessitResult} from "./guessit.service";
+import {TooltipDirective} from "../directives/tooltip.directive";
 
 @Component({
     selector: 'ms-guess-it',
@@ -9,11 +10,17 @@ import {GuessitService, GuessitResult} from "./guessit.service";
         <template [ngSwitchWhen]="0"><a (click)="guessit()">Guess It</a></template>
         <template [ngSwitchWhen]="1">...loading...</template>
         <template [ngSwitchWhen]="2">
-            <a (click)="edit()">(edit)</a> <a (click)="cancel()">(cancel)</a> {{file.new_links[0]}} <a (click)="link()">(link)</a>               
+            <a (click)="edit()" tooltip data-toggle="tooltip" data-placement="bottom" title="Edit">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            </a>
+            <a (click)="cancel()">(cancel)</a>
+            {{file.new_links[0]}}
+            <a (click)="link()">(link)</a>               
         </template>
     </div>
     `,
-    providers: [GuessitService]
+    providers: [GuessitService],
+    directives: [TooltipDirective]
 })
 export class GuessItCompoenent {
     @Input() file: FileInfo;

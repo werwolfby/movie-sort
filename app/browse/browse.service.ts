@@ -22,4 +22,10 @@ export class BrowseService {
             .get("api/files.json")
             .map(r => <FileLinkInfo[]> r.json());
     }
+    
+    link(src, dest : FileInfo) : Observable<FileLinkInfo> {
+        return this._http
+            .get("api/file.json")
+            .map(r => <FileLinkInfo> r.json());        
+    }
 }

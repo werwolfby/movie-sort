@@ -1,5 +1,5 @@
 import {Component, Input} from "angular2/core";
-import {FileInfo, FileLinkInfo} from "./browse.service";
+import {FileInfo, FileLinkInfo, BrowseService} from "./browse.service";
 import {GuessitService, GuessitResult} from "./guessit.service";
 import {TooltipDirective} from "../directives/tooltip.directive";
 
@@ -66,6 +66,7 @@ interface EditFileInfo {
                 </div>
             </div>
         </template>
+        <template [ngSwitchWhen]="3">...linking...</template>
     </div>
     `,
     providers: [GuessitService],
@@ -79,7 +80,7 @@ export class GuessItCompoenent {
     private editLink: EditFileInfo;
     private rootFolders: string[] = [moviesFolder, showsFolder];
     
-    constructor(private _guessitService: GuessitService) {
+    constructor(private _guessitService: GuessitService, private _browseService: BrowseService) {
     }
     
     guessit() {
@@ -103,9 +104,6 @@ export class GuessItCompoenent {
         }
         
         this.newLink = {folder: folder.join("/"), name: this.file.name};
-    }
-    
-    link() {
     }
     
     startEdit() {
@@ -133,7 +131,19 @@ export class GuessItCompoenent {
         this.newLink = {folder: this.editLink.rootFolder + this.editLink.relativeFolder, name: this.editLink.name};
         this.editLink = null;
     }
-    
+     
+    link() {
+        this.state = 3;
+        this._browseService.link(this.file, this.newLink)
+            .subscribe(r => {
+                if (!this.file.links) {
+                    this.file.links = [];
+                }
+                this.file.links.push(...r.links);
+                this.state = 0;
+            });
+    }
+   
     cancel() {
         this.state = 0;
     }

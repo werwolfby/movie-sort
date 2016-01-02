@@ -10,7 +10,6 @@ export interface FileInfo {
 
 export interface FileLinkInfo extends FileInfo {
     links: FileInfo[];
-    new_links: FileInfo[];
 }
 
 @Injectable()

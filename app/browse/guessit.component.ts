@@ -6,6 +6,14 @@ import {TooltipDirective} from "../directives/tooltip.directive";
 const showsFolder = "/shows";
 const moviesFolder = "/movies";
 
+// It not extend FileInfo because there is no folder property 
+// (there is relativeFolder which is relative path from rootFolder) 
+interface EditFileInfo {
+    rootFolder: string;
+    relativeFolder: string;
+    name: string;    
+}
+
 @Component({
     selector: 'ms-guess-it',
     template: `
@@ -39,12 +47,12 @@ const moviesFolder = "/movies";
                     <div class="form-group">
                         <div class="input-group input-group-sm">
                             <div class="input-group-btn">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span> {{editRootFolder}}/</button>
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span> {{editLink.rootFolder}}/</button>
                                 <ul class="dropdown-menu">
-                                    <li *ngFor="#f of rootFolders" [class.active]="editRootFolder == f"><a (click)="setRootFolder(f)">{{f}}/</a></li>
+                                    <li *ngFor="#f of rootFolders" [class.active]="editLink.rootFolder == f"><a (click)="setRootFolder(f)">{{f}}/</a></li>
                                 </ul>
                             </div>
-                            <input type="text" class="form-control" [(ngModel)]="editLink.folder" placeholder="folder">
+                            <input type="text" class="form-control" [(ngModel)]="editLink.relativeFolder" placeholder="folder">
                             <div class="input-group-addon">/</div>
                             <input type="text" class="form-control" [(ngModel)]="editLink.name" placeholder="name">
                         </div>
@@ -68,8 +76,7 @@ export class GuessItCompoenent {
     private state: number = 0;
     private isEdit: boolean = false;
     private newLink: FileInfo;
-    private editRootFolder: string;
-    private editLink: FileInfo;
+    private editLink: EditFileInfo;
     private rootFolders: string[] = [moviesFolder, showsFolder];
     
     constructor(private _guessitService: GuessitService) {
@@ -102,18 +109,16 @@ export class GuessItCompoenent {
     }
     
     startEdit() {
-        this.editLink = $.extend(true, {}, this.newLink);
-        for (var i = 0; i < this.rootFolders.length; i++) {
-            var rootFolder = this.rootFolders[i];
-            if (this.editLink.folder.startsWith(rootFolder)) {
-                this.editRootFolder = rootFolder;
-                this.editLink.folder = this.editLink.folder.slice(Math.min(rootFolder.length + 1, this.editLink.folder.length));
-            }
+        this.editLink = {name: this.newLink.name, rootFolder: null, relativeFolder: this.newLink.folder};
+        this.editLink.rootFolder = this.rootFolders.filter(f => this.newLink.folder.startsWith(f)).pop() || null;
+        if (this.editLink.rootFolder) {
+            var length = Math.min(this.editLink.rootFolder.length + 1, this.editLink.relativeFolder.length);
+            this.editLink.relativeFolder = this.editLink.relativeFolder.slice(length);
         }
     }
     
     setRootFolder(rootFolder) {
-        this.editRootFolder = rootFolder;
+        this.editLink.rootFolder = rootFolder;
     }
     
     cancelEdit() {
@@ -122,10 +127,10 @@ export class GuessItCompoenent {
     
     saveEdit() {
         // remove starting slash
-        if (this.editLink.folder.length > 0 && this.editLink.folder[0] != '/') {
-            this.editLink.folder = '/' + this.editLink.folder;
+        if (this.editLink.relativeFolder.length > 0 && this.editLink.relativeFolder[0] != '/') {
+            this.editLink.relativeFolder = '/' + this.editLink.relativeFolder;
         }
-        this.newLink = {folder: this.editRootFolder + this.editLink.folder, name: this.editLink.name};
+        this.newLink = {folder: this.editLink.rootFolder + this.editLink.relativeFolder, name: this.editLink.name};
         this.editLink = null;
     }
     

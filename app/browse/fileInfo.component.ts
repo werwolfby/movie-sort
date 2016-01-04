@@ -6,7 +6,7 @@ import {BehaviorSubject} from "rxjs/subject/BehaviorSubject";
 
 @Component({
     selector: 'file-info',
-    template: '<div>{{fullName}}</div>'
+    template: '{{fullName}}'
 })
 export class FileInfoComponent implements OnInit {
     private _file : BehaviorSubject<FileInfo> = new BehaviorSubject<FileInfo>(null);

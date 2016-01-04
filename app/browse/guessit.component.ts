@@ -1,6 +1,7 @@
 import {Component, Input} from "angular2/core";
 import {FileInfo, FileLinkInfo, BrowseService} from "./browse.service";
 import {GuessitService} from "./guessit.service";
+import {FileInfoComponent} from "./fileInfo.component";
 import {SettingsService} from "../root/settings.service";
 import {TooltipDirective} from "../directives/tooltip.directive";
 
@@ -23,7 +24,7 @@ const moviesFolder = "Movies";
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     <span>Cancel</span>
                 </button>
-                <span>{{newLink.folder}}/{{newLink.name}}</span>
+                <file-info [file]="newLink"></file-info>
                 <button (click)="link()"  class="btn btn-success btn-xs" type="submit">
                     <span class="glyphicon glyphicon-ok"     aria-hidden="true"></span>
                     <span>Link</span>
@@ -63,7 +64,7 @@ const moviesFolder = "Movies";
     </div>
     `,
     providers: [GuessitService],
-    directives: [TooltipDirective]
+    directives: [TooltipDirective, FileInfoComponent]
 })
 export class GuessItCompoenent {
     @Input() file: FileLinkInfo;

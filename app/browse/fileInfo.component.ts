@@ -5,14 +5,21 @@ import {Observable} from "rxjs/Observable";
 import {BehaviorSubject} from "rxjs/subject/BehaviorSubject";
 import "rxjs/add/operator/concat";
 
+interface FilePath {
+    folderPath: string;
+    filePath: string;
+    isAbsolute: boolean;    
+}
+
 @Component({
     selector: 'file-info',
-    template: '{{displayName}}'
+    template: '<span>{{displayName.folderPath}}</span>{{settings.pathSeparator}}<span>{{displayName.filePath}}</span>'
 })
 export class FileInfoComponent implements OnInit {
     private _file : BehaviorSubject<FileInfo> = new BehaviorSubject<FileInfo>(null);
     private _absolutePath : BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-    public displayName : string;
+    public settings : Settings = {pathSeparator: '/'};
+    public displayName : FilePath = {folderPath: '', filePath: '', isAbsolute: false};
     
     @Input()
     public set file(value: FileInfo) {
@@ -27,16 +34,16 @@ export class FileInfoComponent implements OnInit {
     constructor(private _settingsService: SettingsService) {
     }
     
-    private static _getPath(file: FileInfo, settings: Settings, absolutePath: boolean, inputFolders: FolderInfo[], outputFolders: FolderInfo[]) {
+    private static _getPath(file: FileInfo, settings: Settings, absolutePath: boolean, inputFolders: FolderInfo[], outputFolders: FolderInfo[]) : FilePath {
         if (!file) {
-            return '';
+            return {folderPath: '', filePath: '', isAbsolute: absolutePath};
         }
         var folderItems = absolutePath 
             ? (inputFolders.concat(outputFolders).filter(i => i.name == file.folder).pop() || {path:[]}).path
             : [file.folder];
         
-        var items = [...folderItems, ...(file.path || []), file.name];
-        return items.join(settings.pathSeparator);
+        var items = [...(file.path || []), file.name];
+        return {folderPath: folderItems.join(settings.pathSeparator), filePath: items.join(settings.pathSeparator), isAbsolute: absolutePath};
     }
     
     ngOnInit() {
@@ -44,9 +51,13 @@ export class FileInfoComponent implements OnInit {
         var outputFolders = this._settingsService.outputFolders();
         
         this._settingsService.settings().combineLatest(this._file, this._absolutePath, inputFolders, outputFolders,
-            (settings, file, absolutePath, inputFolders, outputFolders) => FileInfoComponent._getPath(file, settings, absolutePath, inputFolders, outputFolders))
+            (settings, file, absolutePath, inputFolders, outputFolders) => ({
+                settings: settings,
+                displatName: FileInfoComponent._getPath(file, settings, absolutePath, inputFolders, outputFolders)
+            }))
             .subscribe(f => {
-                this.displayName = f;
+                this.settings = f.settings;
+                this.displayName = f.displatName;
             });
     }
 }

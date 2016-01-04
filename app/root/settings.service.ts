@@ -10,7 +10,7 @@ export interface Settings {
 
 export interface FolderInfo {
     name: string;
-    pth: string[];
+    path: string[];
 }
 
 @Injectable()

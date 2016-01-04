@@ -1,9 +1,12 @@
-import {Component, Input} from "angular2/core";
+import {Component, Input, OnInit} from "angular2/core";
 import {FileInfo, FileLinkInfo, BrowseService} from "./browse.service";
 import {GuessitService} from "./guessit.service";
 import {FileInfoComponent} from "./fileInfo.component";
-import {SettingsService} from "../root/settings.service";
+import {SettingsService, Settings, FolderInfo} from "../root/settings.service";
 import {TooltipDirective} from "../directives/tooltip.directive";
+import {Observable} from "rxjs/Observable";
+import {BehaviorSubject} from "rxjs/subject/BehaviorSubject";
+import "rxjs/add/operator/combineLatest";
 
 const showsFolder = "Shows";
 const moviesFolder = "Movies";
@@ -41,13 +44,13 @@ const moviesFolder = "Movies";
                     <div class="form-group">
                         <div class="input-group input-group-sm">
                             <div class="input-group-btn">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span> {{editLink.rootFolder}}/</button>
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span> {{editLink.folder}}{{editSettings.pathSeparator}}</button>
                                 <ul class="dropdown-menu">
-                                    <li *ngFor="#f of rootFolders" [class.active]="editLink.folder == f"><a (click)="setRootFolder(f)">{{f}}/</a></li>
+                                    <li *ngFor="#f of rootFolders" [class.active]="editLink.folder == f.name"><a (click)="setRootFolder(f.name)">{{f.name}}{{editSettings.pathSeparator}}</a></li>
                                 </ul>
                             </div>
                             <input type="text" class="form-control" [ngModel]="getPath(editLink)" (blur)="setPath(editLink, $event.target.value)" placeholder="folder">
-                            <div class="input-group-addon">/</div>
+                            <div class="input-group-addon">{{editSettings.pathSeparator}}</div>
                             <input type="text" class="form-control" [(ngModel)]="editLink.name" placeholder="name">
                         </div>
                     </div>
@@ -66,12 +69,15 @@ const moviesFolder = "Movies";
     providers: [GuessitService],
     directives: [TooltipDirective, FileInfoComponent]
 })
-export class GuessItComponent {
+export class GuessItComponent implements OnInit {
     @Input() file: FileLinkInfo;
     private state: number = 0;
     private newLink: FileInfo;
     private editLink: FileInfo;
-    private rootFolders: string[] = [moviesFolder, showsFolder];
+    private editSettings: Settings;
+    private rootFolders: FolderInfo[] = [];
+    private _settings: Observable<Settings>;
+    private _outputFolders: Observable<FolderInfo[]>;
     
     constructor(private _guessitService: GuessitService, private _browseService: BrowseService, private _settingsService: SettingsService) {
     }
@@ -79,8 +85,10 @@ export class GuessItComponent {
     guessit() {
         this.state = 1;
         this._guessitService
-            .guess(this.file)
-            .subscribe(data => this.onGuess(data));
+            .guess(this.file).combineLatest(this._settings, function (guess, settings) {
+                return {settings: settings, guess: guess};
+            })
+            .subscribe(data => this.onGuess(data.guess));
     }
     
     onGuess(data: FileInfo) {
@@ -91,25 +99,27 @@ export class GuessItComponent {
     getPath(file: FileInfo) {
         if (!file.path || file.path.length == 0)
             return '';
-        return file.path.join('/');
+        return file.path.join(this.editSettings.pathSeparator);
     }
     
     setPath(file: FileInfo, path: string) {
-        if (path.length == 0) {
-            return;
+        if (!path) {
+            path ='';
         }
         
-        var folders = path.split('/').filter(p => p && p.length > 0);
+        var folders = path.split(this.editSettings.pathSeparator).filter(p => p && p.length > 0);
         file.path = folders;
     }
     
     startEdit() {
-        this.editLink = $.extend({}, this.newLink);
-        /*this.editLink.rootFolder = this.rootFolders.filter(f => this.newLink.folder.startsWith(f)).pop() || null;
-        if (this.editLink.rootFolder) {
-            var length = Math.min(this.editLink.rootFolder.length + 1, this.editLink.relativeFolder.length);
-            this.editLink.relativeFolder = this.editLink.relativeFolder.slice(length);
-        }*/
+        this._outputFolders.combineLatest(this._settings, function (outputFolders, settings) {
+                return {outputFolders: outputFolders, settings: settings};            
+            })
+            .subscribe(d => {
+                this.rootFolders = d.outputFolders;
+                this.editSettings = d.settings;
+                this.editLink = $.extend({}, this.newLink);
+            });
     }
     
     setRootFolder(rootFolder) {
@@ -139,5 +149,10 @@ export class GuessItComponent {
    
     cancel() {
         this.state = 0;
+    }
+    
+    ngOnInit() {
+        this._settings = this._settingsService.settings();
+        this._outputFolders = this._settingsService.outputFolders();
     }
 }

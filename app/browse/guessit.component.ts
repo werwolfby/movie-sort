@@ -85,10 +85,8 @@ export class GuessItComponent implements OnInit {
     guessit() {
         this.state = 1;
         this._guessitService
-            .guess(this.file).combineLatest(this._settings, function (guess, settings) {
-                return {settings: settings, guess: guess};
-            })
-            .subscribe(data => this.onGuess(data.guess));
+            .guess(this.file)
+            .subscribe(data => this.onGuess(data));
     }
     
     onGuess(data: FileInfo) {
@@ -112,9 +110,7 @@ export class GuessItComponent implements OnInit {
     }
     
     startEdit() {
-        this._outputFolders.combineLatest(this._settings, function (outputFolders, settings) {
-                return {outputFolders: outputFolders, settings: settings};            
-            })
+        this._outputFolders.combineLatest(this._settings, (outputFolders, settings) => ({outputFolders: outputFolders, settings: settings}))
             .subscribe(d => {
                 this.rootFolders = d.outputFolders;
                 this.editSettings = d.settings;

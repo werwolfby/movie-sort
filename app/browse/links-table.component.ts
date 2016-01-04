@@ -47,15 +47,11 @@ export class LinksTableComponent implements OnInit {
         
         var settings = this._settingsObservable;
         var files = this._allFilesObservable
-            .combineLatest(this._withoutLinksOnlyObservable, function(files, withoutLinksOnly){
-                return files.filter(r => !withoutLinksOnly || ((r.links ? r.links.length : 0) == 0));
-            });
+            .combineLatest(this._withoutLinksOnlyObservable, 
+                           (files, withoutLinksOnly) => files.filter(r => !withoutLinksOnly || ((r.links ? r.links.length : 0) == 0)));
         
-        settings.combineLatest(files, function (settings, files) {
-                return {settings: settings, files: files};
-            })
+        settings.combineLatest(files, (settings, files) => ({settings: settings, files: files}))
             .subscribe(r => {
-                console.log(JSON.stringify(r));
                 this._settings = r.settings;
                 this.files = r.files;
             });

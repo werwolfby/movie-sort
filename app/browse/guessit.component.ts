@@ -27,7 +27,7 @@ const moviesFolder = "Movies";
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     <span>Cancel</span>
                 </button>
-                <file-info [file]="newLink"></file-info>
+                <file-info [file]="newLink" [absolutePath]="absolutePath"></file-info>
                 <button (click)="link()"  class="btn btn-success btn-xs" type="submit">
                     <span class="glyphicon glyphicon-ok"     aria-hidden="true"></span>
                     <span>Link</span>
@@ -44,9 +44,9 @@ const moviesFolder = "Movies";
                     <div class="form-group">
                         <div class="input-group input-group-sm">
                             <div class="input-group-btn">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span> {{editLink.folder}}{{editSettings.pathSeparator}}</button>
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span> {{getFolderPathByName(editLink.folder)}}{{editSettings.pathSeparator}}</button>
                                 <ul class="dropdown-menu">
-                                    <li *ngFor="#f of rootFolders" [class.active]="editLink.folder == f.name"><a (click)="setRootFolder(f.name)">{{f.name}}{{editSettings.pathSeparator}}</a></li>
+                                    <li *ngFor="#f of rootFolders" [class.active]="editLink.folder == f.name"><a (click)="setRootFolder(f.name)">{{getFolderPath(f)}}{{editSettings.pathSeparator}}</a></li>
                                 </ul>
                             </div>
                             <input type="text" class="form-control" [ngModel]="getPath(editLink)" (blur)="setPath(editLink, $event.target.value)" placeholder="folder">
@@ -78,6 +78,8 @@ export class GuessItComponent implements OnInit {
     private rootFolders: FolderInfo[] = [];
     private _settings: Observable<Settings>;
     private _outputFolders: Observable<FolderInfo[]>;
+    @Input()
+    public absolutePath : boolean;
     
     constructor(private _guessitService: GuessitService, private _browseService: BrowseService, private _settingsService: SettingsService) {
     }
@@ -116,6 +118,23 @@ export class GuessItComponent implements OnInit {
                 this.editSettings = d.settings;
                 this.editLink = $.extend({}, this.newLink);
             });
+    }
+    
+    getFolderPathByName(folder: string) {
+        if (this.absolutePath) {
+            var folderInfo = this.rootFolders.filter(f => f.name == folder).pop();
+            return folderInfo ? folderInfo.path.join(this.editSettings.pathSeparator) : folder;
+        } else {
+            return folder;
+        }
+    }
+    
+    getFolderPath(folder: FolderInfo) {
+        if (this.absolutePath) {
+            return folder.path.join(this.editSettings.pathSeparator);
+        } else {
+            return folder.name;
+        }
     }
     
     setRootFolder(rootFolder) {

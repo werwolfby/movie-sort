@@ -16,9 +16,9 @@ import "rxjs/add/operator/combineLatest";
             <th width="50%">Dest</th>
         </tr>
         <tr *ngFor="#file of files">
-            <td width="50%"><file-info [file]="file"></file-info></td>
-            <td width="50%" *ngIf="file.links && file.links.length > 0"><file-info *ngFor="#link of file.links" [file]="link"></file-info></td>
-            <td width="50%" *ngIf="!file.links || file.links.length == 0"><ms-guess-it [file]="file"></ms-guess-it></td>
+            <td width="50%"><file-info [file]="file" [absolutePath]="absolutePath"></file-info></td>
+            <td width="50%" *ngIf="file.links && file.links.length > 0"><file-info *ngFor="#link of file.links" [file]="link" [absolutePath]="absolutePath"></file-info></td>
+            <td width="50%" *ngIf="!file.links || file.links.length == 0"><ms-guess-it [file]="file" [absolutePath]="absolutePath"></ms-guess-it></td>
         </tr>
     </table>
     `,
@@ -32,6 +32,8 @@ export class LinksTableComponent implements OnInit {
     
     private _settings : Settings;    
     public files : FileLinkInfo[] = [];
+    @Input()
+    public absolutePath : boolean;
     
     @Input()
     public set withoutLinksOnly(value: boolean) {

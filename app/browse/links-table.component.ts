@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from "angular2/core";
 import {FileInfo, FileLinkInfo, BrowseService} from "./browse.service";
-import {GuessItCompoenent} from "./guessit.component";
+import {GuessItComponent} from "./guessit.component";
 import {SettingsService, Settings} from "../root/settings.service";
 import {FileInfoComponent} from "./fileInfo.component";
 import {Observable} from "rxjs/Observable";
@@ -22,7 +22,7 @@ import "rxjs/add/operator/combineLatest";
         </tr>
     </table>
     `,
-    directives: [GuessItCompoenent, FileInfoComponent],
+    directives: [GuessItComponent, FileInfoComponent],
     providers: [BrowseService],
 })
 export class LinksTableComponent implements OnInit {

@@ -66,7 +66,7 @@ const moviesFolder = "Movies";
     providers: [GuessitService],
     directives: [TooltipDirective, FileInfoComponent]
 })
-export class GuessItCompoenent {
+export class GuessItComponent {
     @Input() file: FileLinkInfo;
     private state: number = 0;
     private newLink: FileInfo;

@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from "angular2/core";
 import {FileInfo, FileLinkInfo, BrowseService} from "./browse.service";
 import {GuessItCompoenent} from "./guessit.component";
 import {SettingsService, Settings} from "../root/settings.service";
+import {FileInfoComponent} from "./fileInfo.component";
 import {Observable} from "rxjs/Observable";
 import {BehaviorSubject} from "rxjs/subject/BehaviorSubject";
 import "rxjs/add/operator/combineLatest";
@@ -15,13 +16,13 @@ import "rxjs/add/operator/combineLatest";
             <th width="50%">Dest</th>
         </tr>
         <tr *ngFor="#file of files">
-            <td width="50%">{{fullPath(file)}}</td>
-            <td width="50%" *ngIf="file.links && file.links.length > 0"><div *ngFor="#link of file.links">{{fullPath(link)}}</div></td>
+            <td width="50%"><file-info [file]="file"></file-info></td>
+            <td width="50%" *ngIf="file.links && file.links.length > 0"><file-info *ngFor="#link of file.links" [file]="link"></file-info></td>
             <td width="50%" *ngIf="!file.links || file.links.length == 0"><ms-guess-it [file]="file"></ms-guess-it></td>
         </tr>
     </table>
     `,
-    directives: [GuessItCompoenent],
+    directives: [GuessItCompoenent, FileInfoComponent],
     providers: [BrowseService],
 })
 export class LinksTableComponent implements OnInit {
@@ -38,11 +39,6 @@ export class LinksTableComponent implements OnInit {
     }
     
     constructor(private _settingsService: SettingsService, private _browseService : BrowseService) {
-    }
-    
-    fullPath(file: FileInfo) {
-        var items = [file.folder, ...(file.path || []), file.name];
-        return items.join(this._settings ? this._settings.pathSeparator : "/");
     }
     
     ngOnInit() {

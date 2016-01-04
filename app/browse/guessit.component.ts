@@ -15,22 +15,22 @@ const moviesFolder = "Movies";
     selector: 'ms-guess-it',
     template: `
     <div [ngSwitch]="state">
-        <template [ngSwitchWhen]="0"><a (click)="guessit()">Guess It</a></template>
+        <template [ngSwitchWhen]="0"><a (click)="guessit()" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-link" aria-hidden="true"></span><span> Guess It</span></a></template>
         <template [ngSwitchWhen]="1">...loading...</template>
         <template [ngSwitchWhen]="2">
             <div *ngIf="!editLink">
                 <button (click)="startEdit()" class="btn btn-primary btn-xs" type="submit">
                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                    <span>Edit</span>
+                    <span> Edit</span>
                 </button>
                 <button (click)="cancel()" class="btn btn-warning btn-xs" type="submit">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    <span>Cancel</span>
+                    <span> Cancel</span>
                 </button>
                 <file-info [file]="newLink" [absolutePath]="absolutePath"></file-info>
                 <button (click)="link()"  class="btn btn-success btn-xs" type="submit">
-                    <span class="glyphicon glyphicon-ok"     aria-hidden="true"></span>
-                    <span>Link</span>
+                    <span class="glyphicon glyphicon-link"   aria-hidden="true"></span>
+                    <span> Link</span>
                 </button>
             </div>
             <div *ngIf="editLink">

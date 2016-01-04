@@ -2,6 +2,7 @@ import {Component}   from "angular2/core";
 import {RouteConfig, Location, ROUTER_DIRECTIVES} from "angular2/router";
 import {BrowseComponent} from "../browse/browse.component";
 import {LogsComponent}   from "../logs/logs.component";
+import {SettingsService} from "./settings.service";
 
 @Component({
     selector: 'ms-app',
@@ -15,7 +16,6 @@ import {LogsComponent}   from "../logs/logs.component";
                 <ul class="nav navbar-nav">
                     <li [class.active]="isLocationStartsWith('/browse')"><a [routerLink]="['Browse']">Browse</a></li>
                     <li [class.active]="isLocationStartsWith('/logs')"><a [routerLink]="['Logs']">Logs</a></li>
-                    <li><a>Execute</a></li>
                 </ul>
             </div>
         </div>
@@ -30,6 +30,7 @@ import {LogsComponent}   from "../logs/logs.component";
     </div>    
     `,
     directives: [ROUTER_DIRECTIVES],
+    providers: [SettingsService]
 })
 @RouteConfig([
     {path: '/browse', name: 'Browse', component: BrowseComponent, useAsDefault: true},

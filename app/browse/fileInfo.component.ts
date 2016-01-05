@@ -14,7 +14,7 @@ interface FilePath {
 
 @Component({
     selector: 'file-info',
-    template: `<span class="folder-path text-primary" *ngIf="!displayName.isAbsolute" [title]="displayName.absoluteFolderPath">{{displayName.folderName}}</span><span *ngIf="displayName.isAbsolute">{{displayName.absoluteFolderPath}}</span>{{settings.pathSeparator}}<span>{{displayName.filePath}}</span>`
+    template: `<span class="folder-path text-primary" *ngIf="!displayName.isAbsolute" [title]="displayName.absoluteFolderPath">{{displayName.folderName}}{{settings.pathSeparator}}</span><span *ngIf="displayName.isAbsolute">{{displayName.absoluteFolderPath}}{{settings.pathSeparator}}</span><span>{{displayName.filePath}}</span>`
 })
 export class FileInfoComponent implements OnInit {
     private _file : BehaviorSubject<FileInfo> = new BehaviorSubject<FileInfo>(null);

@@ -1,0 +1,17 @@
+{
+	"version": "0.1.0",
+	"command": "build.cmd",
+	"isShellCommand": true,
+	"showOutput": "silent",
+    "tasks": [
+        {
+            "taskName": "start",
+            "showOutput": "never"
+        },
+        {
+            "taskName": "build",
+            "isBuildCommand": true,
+            "showOutput": "silent"
+        }
+    ]
+}

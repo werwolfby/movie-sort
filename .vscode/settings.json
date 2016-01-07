@@ -2,5 +2,6 @@
 {
     "go.buildOnSave": true,
     "go.formatOnSave": true,
-    "go.formatTool": "gofmt"
+    "go.formatTool": "gofmt",
+    "go.lintOnSave": true
 }

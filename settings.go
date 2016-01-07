@@ -61,7 +61,16 @@ func splitPath(s string) []string {
 		return false
 	}
 
-	return strings.FieldsFunc(s, f)
+	result := strings.FieldsFunc(s, f)
+
+	// Prefix linux slash should not be removed
+	// path /mnt/path should be splitted to : ["", "mnt", "path"]
+	// join of this slice will add prefix slash
+	if len(s) >= 1 && s[0] == '/' {
+		return append([]string{""}, result...)
+	}
+
+	return result
 }
 
 func (h *foldersHandler) addPath(name, path string) {

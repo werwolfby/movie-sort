@@ -24,12 +24,17 @@ type folderInfo struct {
 type globalSettingsHandler struct {
 }
 
+type foldersHandler struct {
+	cfg     *config
+	folders []folderInfo
+}
+
 type inputFoldersHandler struct {
-	cfg *config
+	foldersHandler
 }
 
 type outputFoldersHandler struct {
-	cfg *config
+	foldersHandler
 }
 
 func splitPath(s string) []string {
@@ -45,25 +50,28 @@ func splitPath(s string) []string {
 	return strings.FieldsFunc(s, f)
 }
 
-func (globalSettingsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *foldersHandler) addPath(name, path string) {
+	f := folderInfo{Name: name, Path: splitPath(path)}
+
+	h.folders = append(h.folders, f)
+}
+
+func (h *inputFoldersHandler) init() {
+	h.addPath("Downloads", h.cfg.Paths.Source)
+}
+
+func (h *outputFoldersHandler) init() {
+	h.addPath("Movies", h.cfg.Paths.DestMovies)
+	h.addPath("Shows", h.cfg.Paths.DestShows)
+}
+
+func (*globalSettingsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	s := settings{PathSeparator: fmt.Sprintf("%c", os.PathSeparator)}
 	json.NewEncoder(w).Encode(s)
 }
 
-func (h inputFoldersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	path := splitPath(h.cfg.Paths.Source)
-
-	folders := []folderInfo{{Name: "Downloads", Path: path}}
+func (h *foldersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(folders)
-}
-
-func (h outputFoldersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	moviesPath := splitPath(h.cfg.Paths.DestMovies)
-	showsPath := splitPath(h.cfg.Paths.DestShows)
-
-	folders := []folderInfo{{Name: "Movies", Path: moviesPath}, {Name: "Shows", Path: showsPath}}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(folders)
+	json.NewEncoder(w).Encode(h.folders)
 }

@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 )
@@ -39,12 +37,6 @@ type settings struct {
 	InputFoldersSettings  inputFoldersSettings
 	OutputFoldersSettings outputFoldersSettings
 }
-
-type settingsHandler settings
-
-type globalSettingsHandler globalSettings
-
-type foldersHandler foldersSettings
 
 func (sh *settings) init(cfg *config) {
 	sh.InputFoldersSettings.cfg = cfg
@@ -83,18 +75,6 @@ func newSettings(cfg *config) *settings {
 	return s
 }
 
-func (s *settingsHandler) getGlobalSettingsHandler() http.Handler {
-	return (*globalSettingsHandler)(&s.GlobalSettings)
-}
-
-func (s *settingsHandler) getInputFolderSettingsHandler() http.Handler {
-	return (*foldersHandler)(&s.InputFoldersSettings.foldersSettings)
-}
-
-func (s *settingsHandler) getOutputFolderSettingsHandler() http.Handler {
-	return (*foldersHandler)(&s.OutputFoldersSettings.foldersSettings)
-}
-
 func (h *globalSettings) init() {
 	h.PathSeparator = fmt.Sprintf("%c", os.PathSeparator)
 }
@@ -112,14 +92,4 @@ func (h *inputFoldersSettings) init() {
 func (h *outputFoldersSettings) init() {
 	h.addPath("Movies", h.cfg.Paths.DestMovies)
 	h.addPath("Shows", h.cfg.Paths.DestShows)
-}
-
-func (h *globalSettingsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(h)
-}
-
-func (h *foldersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(h.folders)
 }

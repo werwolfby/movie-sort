@@ -11,8 +11,9 @@ import (
 )
 
 func TestGlobalSettings(t *testing.T) {
-	s := globalSettings{PathSeparator: fmt.Sprintf("%c", os.PathSeparator)}
-	w := generateHandlerTest(t, "GET", (*globalSettingsHandler)(&s))
+	s := settings{GlobalSettings: globalSettings{PathSeparator: fmt.Sprintf("%c", os.PathSeparator)}}
+	sh := newSettingsHandler(&s)
+	w := generateHandlerTest(t, "GET", sh.getGlobalSettingsHandler())
 
 	assert.Equal(t, w.Code, 200)
 
@@ -27,10 +28,11 @@ func TestGlobalSettings(t *testing.T) {
 
 func TestInputFoldersSettings(t *testing.T) {
 	cfg := config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}}
-	s := inputFoldersSettings{foldersSettings{cfg: &cfg}}
-	s.init()
+	s := settings{}
+	s.init(&cfg)
+	sh := newSettingsHandler(&s)
 
-	w := generateHandlerTest(t, "GET", (*foldersHandler)(&s.foldersSettings))
+	w := generateHandlerTest(t, "GET", sh.getInputFoldersSettingsHandler())
 
 	assert.Equal(t, w.Code, 200)
 
@@ -45,10 +47,11 @@ func TestInputFoldersSettings(t *testing.T) {
 
 func TestOutputFoldersSettings(t *testing.T) {
 	cfg := config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}}
-	s := outputFoldersSettings{foldersSettings{cfg: &cfg}}
-	s.init()
+	s := settings{}
+	s.init(&cfg)
+	sh := newSettingsHandler(&s)
 
-	w := generateHandlerTest(t, "GET", (*foldersHandler)(&s.foldersSettings))
+	w := generateHandlerTest(t, "GET", sh.getOutputFoldersSettingsHandler())
 
 	assert.Equal(t, w.Code, 200)
 

@@ -11,26 +11,26 @@ import (
 )
 
 func TestGlobalSettings(t *testing.T) {
-	s := globalSettingsHandler{}
-	w := generateHandlerTest(t, "GET", &s)
+	s := globalSettings{PathSeparator: fmt.Sprintf("%c", os.PathSeparator)}
+	w := generateHandlerTest(t, "GET", (*globalSettingsHandler)(&s))
 
 	assert.Equal(t, w.Code, 200)
 
-	var actual settings
+	var actual globalSettings
 
 	if e := json.NewDecoder(w.Body).Decode(&actual); e != nil {
 		t.Errorf("%v", e)
 	}
 
-	assert.Equal(t, actual, settings{PathSeparator: fmt.Sprintf("%c", os.PathSeparator)})
+	assert.Equal(t, globalSettings{PathSeparator: fmt.Sprintf("%c", os.PathSeparator)}, actual)
 }
 
 func TestInputFoldersSettings(t *testing.T) {
 	cfg := config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}}
-	s := inputFoldersHandler{foldersHandler{cfg: &cfg}}
+	s := inputFoldersSettings{foldersSettings{cfg: &cfg}}
 	s.init()
 
-	w := generateHandlerTest(t, "GET", &s)
+	w := generateHandlerTest(t, "GET", (*foldersHandler)(&s.foldersSettings))
 
 	assert.Equal(t, w.Code, 200)
 
@@ -45,10 +45,10 @@ func TestInputFoldersSettings(t *testing.T) {
 
 func TestOutputFoldersSettings(t *testing.T) {
 	cfg := config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}}
-	s := outputFoldersHandler{foldersHandler{cfg: &cfg}}
+	s := outputFoldersSettings{foldersSettings{cfg: &cfg}}
 	s.init()
 
-	w := generateHandlerTest(t, "GET", &s)
+	w := generateHandlerTest(t, "GET", (*foldersHandler)(&s.foldersSettings))
 
 	assert.Equal(t, w.Code, 200)
 

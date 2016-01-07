@@ -12,43 +12,47 @@ const (
 	pathSep = "\\/"
 )
 
-type settings struct {
-	PathSeparator string `json:"pathSeparator"`
-}
-
 type folderInfo struct {
 	Name string   `json:"name"`
 	Path []string `json:"path"`
 }
 
-type globalSettingsHandler struct {
+type globalSettings struct {
+	PathSeparator string `json:"pathSeparator"`
 }
 
-type foldersHandler struct {
+type foldersSettings struct {
 	cfg     *config
 	folders []folderInfo
 }
 
-type inputFoldersHandler struct {
-	foldersHandler
+type inputFoldersSettings struct {
+	foldersSettings
 }
 
-type outputFoldersHandler struct {
-	foldersHandler
+type outputFoldersSettings struct {
+	foldersSettings
 }
 
-type settingsHandlers struct {
-	GlobalSettingsHandler globalSettingsHandler
-	InputFoldersHandler   inputFoldersHandler
-	OutputFoldersHandler  outputFoldersHandler
+type settings struct {
+	GlobalSettings        globalSettings
+	InputFoldersSettings  inputFoldersSettings
+	OutputFoldersSettings outputFoldersSettings
 }
 
-func (sh *settingsHandlers) init(cfg *config) {
-	sh.InputFoldersHandler.cfg = cfg
-	sh.OutputFoldersHandler.cfg = cfg
+type settingsHandler settings
 
-	sh.InputFoldersHandler.init()
-	sh.OutputFoldersHandler.init()
+type globalSettingsHandler globalSettings
+
+type foldersHandler foldersSettings
+
+func (sh *settings) init(cfg *config) {
+	sh.InputFoldersSettings.cfg = cfg
+	sh.OutputFoldersSettings.cfg = cfg
+
+	sh.GlobalSettings.init()
+	sh.InputFoldersSettings.init()
+	sh.OutputFoldersSettings.init()
 }
 
 func splitPath(s string) []string {
@@ -73,25 +77,46 @@ func splitPath(s string) []string {
 	return result
 }
 
-func (h *foldersHandler) addPath(name, path string) {
+func newSettings(cfg *config) *settings {
+	s := new(settings)
+	s.init(cfg)
+	return s
+}
+
+func (s *settingsHandler) getGlobalSettingsHandler() http.Handler {
+	return (*globalSettingsHandler)(&s.GlobalSettings)
+}
+
+func (s *settingsHandler) getInputFolderSettingsHandler() http.Handler {
+	return (*foldersHandler)(&s.InputFoldersSettings.foldersSettings)
+}
+
+func (s *settingsHandler) getOutputFolderSettingsHandler() http.Handler {
+	return (*foldersHandler)(&s.OutputFoldersSettings.foldersSettings)
+}
+
+func (h *globalSettings) init() {
+	h.PathSeparator = fmt.Sprintf("%c", os.PathSeparator)
+}
+
+func (h *foldersSettings) addPath(name, path string) {
 	f := folderInfo{Name: name, Path: splitPath(path)}
 
 	h.folders = append(h.folders, f)
 }
 
-func (h *inputFoldersHandler) init() {
+func (h *inputFoldersSettings) init() {
 	h.addPath("Downloads", h.cfg.Paths.Source)
 }
 
-func (h *outputFoldersHandler) init() {
+func (h *outputFoldersSettings) init() {
 	h.addPath("Movies", h.cfg.Paths.DestMovies)
 	h.addPath("Shows", h.cfg.Paths.DestShows)
 }
 
-func (*globalSettingsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *globalSettingsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	s := settings{PathSeparator: fmt.Sprintf("%c", os.PathSeparator)}
-	json.NewEncoder(w).Encode(s)
+	json.NewEncoder(w).Encode(h)
 }
 
 func (h *foldersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {

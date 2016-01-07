@@ -12,13 +12,14 @@ func main() {
 		log.Fatal(e)
 	}
 
-	sh := settingsHandlers{}
-	sh.init(c)
+	s := newSettings(c)
+	sh := (*settingsHandler)(s)
 
 	r := mux.NewRouter()
-	r.Handle("/api/settings", &sh.GlobalSettingsHandler).Methods("GET")
-	r.Handle("/api/settings/input-folders", &sh.InputFoldersHandler).Methods("GET")
-	r.Handle("/api/settings/output-folders", &sh.OutputFoldersHandler).Methods("GET")
+
+	r.Handle("/api/settings", sh.getGlobalSettingsHandler()).Methods("GET")
+	r.Handle("/api/settings/input-folders", sh.getInputFolderSettingsHandler()).Methods("GET")
+	r.Handle("/api/settings/output-folders", sh.getOutputFolderSettingsHandler()).Methods("GET")
 
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 

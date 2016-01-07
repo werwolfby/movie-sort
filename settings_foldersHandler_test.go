@@ -50,7 +50,7 @@ var outputFoldersInitTests = []struct {
 
 func TestAddPath(t *testing.T) {
 	for _, tt := range addPathTests {
-		f := foldersHandler{}
+		f := foldersSettings{}
 		for _, ap := range tt.AddPaths {
 			f.addPath(ap.Name, ap.Path)
 		}
@@ -61,7 +61,7 @@ func TestAddPath(t *testing.T) {
 
 func TestInputFoldersInit(t *testing.T) {
 	for _, tt := range inputFoldersInitTests {
-		f := inputFoldersHandler{foldersHandler{cfg: &tt.Config}}
+		f := inputFoldersSettings{foldersSettings{cfg: &tt.Config}}
 		f.init()
 
 		assert.Equal(t, f.folders, tt.Expected)
@@ -70,7 +70,7 @@ func TestInputFoldersInit(t *testing.T) {
 
 func TestOutputFoldersInit(t *testing.T) {
 	for _, tt := range outputFoldersInitTests {
-		f := outputFoldersHandler{foldersHandler{cfg: &tt.Config}}
+		f := outputFoldersSettings{foldersSettings{cfg: &tt.Config}}
 		f.init()
 
 		assert.Equal(t, f.folders, tt.Expected)

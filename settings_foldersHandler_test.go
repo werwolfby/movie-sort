@@ -24,12 +24,54 @@ var addPathTests = []struct {
 			{"Downloads2", []string{"D:", "Downloads", "Test2"}}}},
 }
 
+var inputFoldersInitTests = []struct {
+	Config   config
+	Expected []folderInfo
+}{
+	{config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}},
+		[]folderInfo{{"Downloads", []string{"D:", "Torrents", "Complete"}}}},
+	{config{configPaths{Source: "/mnt/media/Torrents/Complete", DestMovies: "/mnt/media/Video/Movies", DestShows: "/mnt/media/Video/Shows"}},
+		[]folderInfo{{"Downloads", []string{"", "mnt", "media", "Torrents", "Complete"}}}},
+}
+
+var outputFoldersInitTests = []struct {
+	Config   config
+	Expected []folderInfo
+}{
+	{config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}},
+		[]folderInfo{
+			{"Movies", []string{"D:", "Video", "Movies"}},
+			{"Shows", []string{"D:", "Video", "Shows"}}}},
+	{config{configPaths{Source: "/mnt/media/Torrents/Complete", DestMovies: "/mnt/media/Video/Movies", DestShows: "/mnt/media/Video/Shows"}},
+		[]folderInfo{
+			{"Movies", []string{"", "mnt", "media", "Video", "Movies"}},
+			{"Shows", []string{"", "mnt", "media", "Video", "Shows"}}}},
+}
+
 func TestAddPath(t *testing.T) {
 	for _, tt := range addPathTests {
 		f := foldersHandler{}
 		for _, ap := range tt.AddPaths {
 			f.addPath(ap.Name, ap.Path)
 		}
+
+		assert.Equal(t, f.folders, tt.Expected)
+	}
+}
+
+func TestInputFoldersInit(t *testing.T) {
+	for _, tt := range inputFoldersInitTests {
+		f := inputFoldersHandler{foldersHandler{cfg: &tt.Config}}
+		f.init()
+
+		assert.Equal(t, f.folders, tt.Expected)
+	}
+}
+
+func TestOutputFoldersInit(t *testing.T) {
+	for _, tt := range outputFoldersInitTests {
+		f := outputFoldersHandler{foldersHandler{cfg: &tt.Config}}
+		f.init()
 
 		assert.Equal(t, f.folders, tt.Expected)
 	}

@@ -12,8 +12,10 @@ type config struct {
 	Paths configPaths
 }
 
-func readConfig(filename string) *config {
+func readConfig(filename string) (*config, error) {
 	cfg := new(config)
-	gcfg.ReadFileInto(cfg, "config.ini")
-	return cfg
+	if e := gcfg.ReadFileInto(cfg, "config.ini"); e != nil {
+		return nil, e
+	}
+	return cfg, nil
 }

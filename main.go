@@ -7,7 +7,10 @@ import (
 )
 
 func main() {
-	c := readConfig("config.ini")
+	c, e := readConfig("config.ini")
+	if e != nil {
+		log.Fatal(e)
+	}
 
 	sh := settingsHandlers{}
 	sh.init(c)
@@ -20,5 +23,6 @@ func main() {
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 
 	http.Handle("/", r)
+	log.Println("Starting server on http://localhost:88")
 	log.Fatal(http.ListenAndServe(":88", nil))
 }

@@ -13,7 +13,6 @@ func main() {
 	sh.init(c)
 
 	r := mux.NewRouter()
-	r.Headers("Content-Type", "application/json")
 	r.Handle("/api/settings", &sh.GlobalSettingsHandler).Methods("GET")
 	r.Handle("/api/settings/input-folders", &sh.InputFoldersHandler).Methods("GET")
 	r.Handle("/api/settings/output-folders", &sh.OutputFoldersHandler).Methods("GET")

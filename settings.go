@@ -37,6 +37,20 @@ type outputFoldersHandler struct {
 	foldersHandler
 }
 
+type settingsHandlers struct {
+	GlobalSettingsHandler globalSettingsHandler
+	InputFoldersHandler   inputFoldersHandler
+	OutputFoldersHandler  outputFoldersHandler
+}
+
+func (sh *settingsHandlers) init(cfg *config) {
+	sh.InputFoldersHandler.cfg = cfg
+	sh.OutputFoldersHandler.cfg = cfg
+
+	sh.InputFoldersHandler.init()
+	sh.OutputFoldersHandler.init()
+}
+
 func splitPath(s string) []string {
 	f := func(r rune) bool {
 		for _, c := range pathSep {

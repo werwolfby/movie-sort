@@ -6,20 +6,6 @@ import (
 	"net/http"
 )
 
-type settingsHandlers struct {
-	GlobalSettingsHandler globalSettingsHandler
-	InputFoldersHandler   inputFoldersHandler
-	OutputFoldersHandler  outputFoldersHandler
-}
-
-func (sh *settingsHandlers) init(cfg *config) {
-	sh.InputFoldersHandler.cfg = cfg
-	sh.OutputFoldersHandler.cfg = cfg
-
-	sh.InputFoldersHandler.init()
-	sh.OutputFoldersHandler.init()
-}
-
 func main() {
 	c := readConfig("config.ini")
 

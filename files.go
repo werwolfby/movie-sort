@@ -7,12 +7,19 @@ import (
 )
 
 type fileInfo struct {
-	Folder string
-	Path   []string
-	Name   string
+	Folder     string
+	Path       []string
+	Name       string
+	OsFileInfo os.FileInfo
 }
 
 type readDirFunc func(dirname string) ([]os.FileInfo, error)
+
+type sameFileFunc func(fi1, fi2 os.FileInfo) bool
+
+func (f *fileInfo) getFullName(folder folderInfo) string {
+	return path.Join(append(append(folder.Path, f.Path...), f.Name)...)
+}
 
 func getAllFiles(reader readDirFunc, folderName string, folderPath []string, dirPath []string, extensions []string) ([]fileInfo, error) {
 	dir := path.Join(append(folderPath, dirPath...)...)
@@ -30,7 +37,7 @@ func getAllFiles(reader readDirFunc, folderName string, folderPath []string, dir
 			ext = ext[1:]
 			for _, e := range extensions {
 				if e == ext {
-					files = append(files, fileInfo{folderName, dirPath, f.Name()})
+					files = append(files, fileInfo{folderName, dirPath, f.Name(), f})
 					break
 				}
 			}

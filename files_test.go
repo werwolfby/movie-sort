@@ -50,14 +50,19 @@ type mockDrive map[string][]string
 func (drive mockDrive) getFiles(name string) []os.FileInfo {
 	f := drive[name]
 	if f == nil {
-		return []os.FileInfo{}
+		f = []string{}
 	}
 
 	subfolders := []string{}
 	if drive != nil {
 		for k := range drive {
 			if strings.HasPrefix(k, name+"/") {
-				subfolders = append(subfolders, k[len(name)+1:])
+				subfolder := k[len(name)+1:]
+				index := strings.Index(subfolder, "/")
+				if index > 0 {
+					subfolder = subfolder[:strings.Index(subfolder, "/")]
+				}
+				subfolders = append(subfolders, subfolder)
 			}
 		}
 	}
@@ -88,14 +93,23 @@ func TestGetAllFiles(t *testing.T) {
 	files, err := getAllFiles(readDir, "Downloads", []string{"D:", "Downloads", "Complete"}, []string{}, []string{"mkv", "avi"})
 
 	expected := []fileInfo{
-		fileInfo{"Downloads", []string{"TBBT (S09) 720p"}, "TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv"},
-		fileInfo{"Downloads", []string{"TBBT (S09) 720p"}, "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv"},
-		fileInfo{"Downloads", []string{}, "1.mkv"},
-		fileInfo{"Downloads", []string{}, "Arrow.S01E08.rus.LostFilm.TV.avi"},
-		fileInfo{"Downloads", []string{}, "Arrow.S01E09.rus.LostFilm.TV.avi"},
-		fileInfo{"Downloads", []string{}, "Пианистка DVDRip.avi"},
+		fileInfo{"Downloads", []string{"TBBT (S09) 720p"}, "TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", nil},
+		fileInfo{"Downloads", []string{"TBBT (S09) 720p"}, "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv", nil},
+		fileInfo{"Downloads", []string{}, "1.mkv", nil},
+		fileInfo{"Downloads", []string{}, "Arrow.S01E08.rus.LostFilm.TV.avi", nil},
+		fileInfo{"Downloads", []string{}, "Arrow.S01E09.rus.LostFilm.TV.avi", nil},
+		fileInfo{"Downloads", []string{}, "Пианистка DVDRip.avi", nil},
+	}
+
+	for i, fi := range expected {
+		fillFileInfo(&fi)
+		expected[i] = fi
 	}
 
 	assert.Nil(t, err)
 	assert.Equal(t, expected, files)
+}
+
+func fillFileInfo(f *fileInfo) {
+	f.OsFileInfo = &MockFileInfo{name: f.Name}
 }

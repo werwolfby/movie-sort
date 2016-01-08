@@ -14,12 +14,15 @@ func main() {
 
 	s := newSettings(c)
 	sh := newSettingsHandler(s)
+	lh := newLinksHandlers(s)
 
 	r := mux.NewRouter()
 
 	r.Handle("/api/settings", sh.getGlobalSettingsHandler()).Methods("GET")
 	r.Handle("/api/settings/input-folders", sh.getInputFoldersSettingsHandler()).Methods("GET")
 	r.Handle("/api/settings/output-folders", sh.getOutputFoldersSettingsHandler()).Methods("GET")
+
+	r.Handle("/api/links", lh.getLinksHandler())
 
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 

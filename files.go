@@ -7,10 +7,10 @@ import (
 )
 
 type fileInfo struct {
-	Folder     string
-	Path       []string
-	Name       string
-	OsFileInfo os.FileInfo
+	Folder     string      `json:"folder"`
+	Path       []string    `json:"path"`
+	Name       string      `json:"name"`
+	OsFileInfo os.FileInfo `json:"-"`
 }
 
 type readDirFunc func(dirname string) ([]os.FileInfo, error)

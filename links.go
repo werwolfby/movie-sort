@@ -2,5 +2,5 @@ package main
 
 type linkInfo struct {
 	fileInfo
-	links []fileInfo
+	Links []fileInfo `json:"links"`
 }

@@ -38,7 +38,7 @@ func searchHardLinks(reader readDirFunc, sameFile sameFileFunc, inputFolders []f
 				links = append(links, outputFile.myFileInfo)
 			}
 		}
-		result[i] = linkInfo{fileInfo: inputFile.myFileInfo, links: links}
+		result[i] = linkInfo{fileInfo: inputFile.myFileInfo, Links: links}
 	}
 
 	return result

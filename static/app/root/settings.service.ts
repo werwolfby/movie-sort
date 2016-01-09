@@ -21,13 +21,13 @@ export class SettingsService {
     
     constructor(private _http: Http) {
         this._settings = this._http
-            .get("api/settings.json")
+            .get("api/settings")
             .map(r => <Settings> r.json());
         this._inputFolders = this._http
-            .get("api/settings/input-folders.json")
+            .get("api/settings/input-folders")
             .map(r => <FolderInfo[]> r.json());
         this._outputFolders = this._http
-            .get("api/settings/output-folders.json")
+            .get("api/settings/output-folders")
             .map(r => <FolderInfo[]> r.json());
     }
     

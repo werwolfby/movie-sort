@@ -18,4 +18,4 @@ if "%2" == "start" goto run
 goto:eof
 
 :run
-start ./../../../../bin/hello-rest.exe
+start ./../../../../bin/movie-sort.exe

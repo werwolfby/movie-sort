@@ -24,14 +24,13 @@ export class BrowseService {
         if (folder != null) {
             path = path + "/" + folder;            
         }
-        path = path + ".json";
         return this._http
             .get(path)
             .map(r => <FileLinkInfo[]> r.json());
     }
     
     get(fileInfo: FileInfo) : Observable<FileInfo> {
-        var path = "api/links/" + fileInfo.folder + "/" + fileInfo.path.join("/") + fileInfo.name + ".json";
+        var path = "api/links/" + fileInfo.folder + "/" + fileInfo.path.join("/") + fileInfo.name;
         return this._http
             .get(path)
             .map(r => <FileInfo> r.json())
@@ -39,7 +38,7 @@ export class BrowseService {
     }
     
     link(src, dest : FileInfo) : Observable<FileLinkInfo> {
-        var path = "api/links/" + src.folder + "/" + src.path.join("/") + src.name + ".json";
+        var path = "api/links/" + src.folder + "/" + src.path.join("/") + src.name;
         return this._http
             .get(path)
             .map(r => {

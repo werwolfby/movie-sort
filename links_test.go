@@ -31,29 +31,29 @@ func TestSearchLinks(t *testing.T) {
 	assert.NotNil(t, result)
 
 	expected := []linkInfo{
-		{fileInfo: fileInfo{"Downloads", []string{"TBBT (S09) 720p"}, "TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", nil}, links: []fileInfo{
+		{fileInfo: fileInfo{"Downloads", []string{"TBBT (S09) 720p"}, "TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", nil}, Links: []fileInfo{
 			fileInfo{"Shows", []string{"TBBT", "Season 9"}, "TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", nil},
 		}},
-		{fileInfo: fileInfo{"Downloads", []string{"TBBT (S09) 720p"}, "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv", nil}, links: []fileInfo{
+		{fileInfo: fileInfo{"Downloads", []string{"TBBT (S09) 720p"}, "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv", nil}, Links: []fileInfo{
 			fileInfo{"Shows", []string{"TBBT", "Season 9"}, "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv", nil},
 		}},
-		{fileInfo: fileInfo{"Downloads", []string{}, "1.mkv", nil}, links: nil},
-		{fileInfo: fileInfo{"Downloads", []string{}, "Arrow.S01E08.rus.LostFilm.TV.avi", nil}, links: []fileInfo{
+		{fileInfo: fileInfo{"Downloads", []string{}, "1.mkv", nil}, Links: nil},
+		{fileInfo: fileInfo{"Downloads", []string{}, "Arrow.S01E08.rus.LostFilm.TV.avi", nil}, Links: []fileInfo{
 			fileInfo{"Shows", []string{"Arrow", "Season 1"}, "Arrow.S01E08.rus.LostFilm.TV.avi", nil},
 		}},
-		{fileInfo: fileInfo{"Downloads", []string{}, "Arrow.S01E09.rus.LostFilm.TV.avi", nil}, links: []fileInfo{
+		{fileInfo: fileInfo{"Downloads", []string{}, "Arrow.S01E09.rus.LostFilm.TV.avi", nil}, Links: []fileInfo{
 			fileInfo{"Shows", []string{"Arrow", "Season 1"}, "Arrow.S01E09.rus.LostFilm.TV.avi", nil},
 		}},
-		{fileInfo: fileInfo{"Downloads", []string{}, "Пианистка DVDRip.avi", nil}, links: []fileInfo{
+		{fileInfo: fileInfo{"Downloads", []string{}, "Пианистка DVDRip.avi", nil}, Links: []fileInfo{
 			fileInfo{"Movies", []string{}, "Пианистка DVDRip.avi", nil},
 		}},
 	}
 
 	for i, fi := range expected {
 		fillFileInfo(&fi.fileInfo)
-		for j, li := range fi.links {
+		for j, li := range fi.Links {
 			fillFileInfo(&li)
-			fi.links[j] = li
+			fi.Links[j] = li
 		}
 		expected[i] = fi
 	}

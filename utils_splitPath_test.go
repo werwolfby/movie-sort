@@ -21,6 +21,8 @@ var splitPathTests = []struct {
 	{"D:/Torrents\\Complete", []string{"D:", "Torrents", "Complete"}},
 	// linux paths
 	{"/mnt/media/Downloads/Complete", []string{"", "mnt", "media", "Downloads", "Complete"}},
+	// UNC paths
+	{"\\\\WORKSTATION\\media\\Downloads\\Complete", []string{"\\", "WORKSTATION", "media", "Downloads", "Complete"}},
 }
 
 func TestSplitPath1(t *testing.T) {

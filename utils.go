@@ -21,5 +21,12 @@ func splitPath(s string) []string {
 		return append([]string{""}, result...)
 	}
 
+	// Prefix UNC paths should not be removed
+	// path \\WORKSTATION\path should be splitted to : ["\", "WORKSTATION", "path"]
+	// join of this slice will return valid UNC path
+	if strings.HasPrefix(s, "\\\\") {
+		return append([]string{"\\"}, result...)
+	}
+
 	return result
 }

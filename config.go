@@ -8,8 +8,13 @@ type configPaths struct {
 	DestShows  string `gcfg:"dest-shows"`
 }
 
+type configServices struct {
+	GuessItURL string `gcfg:"guessit"`
+}
+
 type config struct {
-	Paths configPaths
+	Paths    configPaths
+	Services configServices
 }
 
 func readConfig(filename string) (*config, error) {

@@ -13,8 +13,10 @@ func main() {
 	}
 
 	s := newSettings(c)
+	g := newGuessItService(c)
 	sh := newSettingsHandler(s)
 	lh := newLinksHandlers(s)
+	gh := newGuessitHandler(s, g)
 
 	r := mux.NewRouter()
 
@@ -23,6 +25,8 @@ func main() {
 	r.Handle("/api/settings/output-folders", sh.getOutputFoldersSettingsHandler()).Methods("GET")
 
 	r.Handle("/api/links", lh.getLinksHandler())
+
+	r.Handle("/api/guess/{folder}/{path:.*}", gh)
 
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 

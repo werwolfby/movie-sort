@@ -11,7 +11,7 @@ export class GuessitService {
     
     guess(fileInfo: FileInfo) : Observable<FileInfo> {
         return this._http
-            .get(["/api/guess", fileInfo.folder, ...fileInfo.path, fileInfo.name + ".json"].join("/"))
+            .get(["/api/guess", fileInfo.folder, ...fileInfo.path, fileInfo.name].join("/"))
             .map(r => <FileInfo> r.json());
     }
 };

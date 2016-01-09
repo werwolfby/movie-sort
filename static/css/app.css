@@ -1,0 +1,9 @@
+body {
+  padding-top: 50px;
+}
+.movie-sorter {
+  padding: 40px 15px;
+}
+.movie-sorter .folder-path {
+  border-bottom: 1px dashed #ddd;
+}

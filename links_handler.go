@@ -10,11 +10,11 @@ import (
 const linksAPI = "/api/links"
 
 type linksHandlers struct {
-	Settings *settings
+	Links *links
 }
 
-func newLinksHandlers(s *settings) *linksHandlers {
-	return &linksHandlers{s}
+func newLinksHandlers(l *links) *linksHandlers {
+	return &linksHandlers{l}
 }
 
 func (l *linksHandlers) getLinksHandler() http.Handler {
@@ -26,13 +26,7 @@ func (l *linksHandlers) getLinksHandler() http.Handler {
 		}
 		path = path[len(linksAPI):]
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		links := l.getLinks("", nil)
+		links := l.Links.getLinks(ioutil.ReadDir, os.SameFile, "", nil)
 		json.NewEncoder(w).Encode(links)
 	})
-}
-
-func (l *linksHandlers) getLinks(folder string, path []string) []linkInfo {
-	return searchHardLinks(ioutil.ReadDir, os.SameFile,
-		l.Settings.InputFoldersSettings.folders,
-		l.Settings.OutputFoldersSettings.folders)
 }

@@ -14,8 +14,9 @@ func main() {
 
 	s := newSettings(c)
 	g := newGuessItService(c)
+	l := newLinks(s)
 	sh := newSettingsHandler(s)
-	lh := newLinksHandlers(s)
+	lh := newLinksHandlers(l)
 	gh := newGuessitHandler(s, g)
 
 	r := mux.NewRouter()

@@ -3,8 +3,8 @@
     "files.exclude": {
         "**/.git": true,
         "**/.DS_Store": true,
-        "app/**/*.js": true,
-        "app/**/*.js.map": true,
+        "static/app/**/*.js": true,
+        "static/app/**/*.js.map": true,
         "node_modules": true
     },
     "go.buildOnSave": true,

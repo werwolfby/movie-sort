@@ -26,7 +26,7 @@ func main() {
 
 	r.Handle("/api/links", lh.getLinksHandler())
 
-	r.Handle("/api/guess/{folder}/{path:.*}", gh)
+	r.Handle("/api/guess/{folder}/{path:.*}", gh.getHandler())
 
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 

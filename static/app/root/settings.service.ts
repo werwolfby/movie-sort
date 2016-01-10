@@ -1,7 +1,7 @@
 import {Injectable} from "angular2/core";
 import {Http} from "angular2/http";
 import "rxjs/add/operator/map";
-import "rxjs/add/operator/publish";
+import "rxjs/add/operator/share";
 import {Observable} from "rxjs/Observable"
 
 export interface Settings {
@@ -22,13 +22,16 @@ export class SettingsService {
     constructor(private _http: Http) {
         this._settings = this._http
             .get("api/settings")
-            .map(r => <Settings> r.json());
+            .map(r => <Settings> r.json())
+            .share();
         this._inputFolders = this._http
             .get("api/settings/input-folders")
-            .map(r => <FolderInfo[]> r.json());
+            .map(r => <FolderInfo[]> r.json())
+            .share();
         this._outputFolders = this._http
             .get("api/settings/output-folders")
-            .map(r => <FolderInfo[]> r.json());
+            .map(r => <FolderInfo[]> r.json())
+            .share();
     }
     
     settings() : Observable<Settings> {

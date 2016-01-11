@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -25,7 +26,8 @@ func main() {
 	r.Handle("/api/settings/input-folders", sh.getInputFoldersSettingsHandler()).Methods("GET")
 	r.Handle("/api/settings/output-folders", sh.getOutputFoldersSettingsHandler()).Methods("GET")
 
-	r.Handle("/api/links", lh.getLinksHandler())
+	r.Handle("/api/links", lh.getLinksHandler()).Methods("GET")
+	r.Handle("/api/links/{path:.*}", lh.getPutLinksHandler(os.Link)).Methods("PUT")
 
 	r.Handle("/api/guess/{folder}/{path:.*}", gh.getHandler())
 

@@ -6,7 +6,10 @@ import (
 )
 
 const (
-	pathSep = "\\/"
+	pathSep         = "\\/"
+	downloadsFolder = "Downloads"
+	moviesFolder    = "Movies"
+	showsFolder     = "Shows"
 )
 
 type folderInfo struct {
@@ -63,10 +66,27 @@ func (h *foldersSettings) addPath(name, path string) {
 }
 
 func (h *inputFoldersSettings) init() {
-	h.addPath("Downloads", h.cfg.Paths.Source)
+	h.addPath(downloadsFolder, h.cfg.Paths.Source)
 }
 
 func (h *outputFoldersSettings) init() {
-	h.addPath("Movies", h.cfg.Paths.DestMovies)
-	h.addPath("Shows", h.cfg.Paths.DestShows)
+	h.addPath(moviesFolder, h.cfg.Paths.DestMovies)
+	h.addPath(showsFolder, h.cfg.Paths.DestShows)
+}
+
+func (h *foldersSettings) find(folder string) *folderInfo {
+	for _, f := range h.folders {
+		if f.Name == folder {
+			return &f
+		}
+	}
+	return nil
+}
+
+func (h *outputFoldersSettings) getMovies() folderInfo {
+	return *h.find(moviesFolder)
+}
+
+func (h *outputFoldersSettings) getShows() folderInfo {
+	return *h.find(showsFolder)
 }

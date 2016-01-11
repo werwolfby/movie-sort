@@ -40,7 +40,7 @@ export class BrowseService {
     link(src, dest : FileInfo) : Observable<FileLinkInfo> {
         var path = "api/links/" + src.folder + "/" + src.path.join("/") + src.name;
         return this._http
-            .get(path)
+            .put(path, JSON.stringify(dest))
             .map(r => {
                 var result = <FileLinkInfo> r.json();
                 result.links = [dest];

@@ -27,7 +27,7 @@ func TestGlobalSettings(t *testing.T) {
 }
 
 func TestInputFoldersSettings(t *testing.T) {
-	cfg := config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}}
+	cfg := config{Paths: configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}}
 	s := settings{}
 	s.init(&cfg)
 	sh := newSettingsHandler(&s)
@@ -46,7 +46,7 @@ func TestInputFoldersSettings(t *testing.T) {
 }
 
 func TestOutputFoldersSettings(t *testing.T) {
-	cfg := config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}}
+	cfg := config{Paths: configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}}
 	s := settings{}
 	s.init(&cfg)
 	sh := newSettingsHandler(&s)

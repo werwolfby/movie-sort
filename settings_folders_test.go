@@ -28,9 +28,9 @@ var inputFoldersInitTests = []struct {
 	Config   config
 	Expected []folderInfo
 }{
-	{config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}},
+	{config{Paths: configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}},
 		[]folderInfo{{"Downloads", []string{"D:", "Torrents", "Complete"}}}},
-	{config{configPaths{Source: "/mnt/media/Torrents/Complete", DestMovies: "/mnt/media/Video/Movies", DestShows: "/mnt/media/Video/Shows"}},
+	{config{Paths: configPaths{Source: "/mnt/media/Torrents/Complete", DestMovies: "/mnt/media/Video/Movies", DestShows: "/mnt/media/Video/Shows"}},
 		[]folderInfo{{"Downloads", []string{"", "mnt", "media", "Torrents", "Complete"}}}},
 }
 
@@ -38,11 +38,11 @@ var outputFoldersInitTests = []struct {
 	Config   config
 	Expected []folderInfo
 }{
-	{config{configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}},
+	{config{Paths: configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}},
 		[]folderInfo{
 			{"Movies", []string{"D:", "Video", "Movies"}},
 			{"Shows", []string{"D:", "Video", "Shows"}}}},
-	{config{configPaths{Source: "/mnt/media/Torrents/Complete", DestMovies: "/mnt/media/Video/Movies", DestShows: "/mnt/media/Video/Shows"}},
+	{config{Paths: configPaths{Source: "/mnt/media/Torrents/Complete", DestMovies: "/mnt/media/Video/Movies", DestShows: "/mnt/media/Video/Shows"}},
 		[]folderInfo{
 			{"Movies", []string{"", "mnt", "media", "Video", "Movies"}},
 			{"Shows", []string{"", "mnt", "media", "Video", "Shows"}}}},

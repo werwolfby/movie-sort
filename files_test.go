@@ -56,11 +56,11 @@ func (drive mockDrive) getFiles(name string) []os.FileInfo {
 	subfolders := []string{}
 	if drive != nil {
 		for k := range drive {
-			if strings.HasPrefix(k, name+"/") {
+			if strings.HasPrefix(k, name+"\\") {
 				subfolder := k[len(name)+1:]
-				index := strings.Index(subfolder, "/")
+				index := strings.Index(subfolder, "\\")
 				if index > 0 {
-					subfolder = subfolder[:strings.Index(subfolder, "/")]
+					subfolder = subfolder[:strings.Index(subfolder, "\\")]
 				}
 				subfolders = append(subfolders, subfolder)
 			}
@@ -81,8 +81,8 @@ func (drive mockDrive) getFiles(name string) []os.FileInfo {
 }
 
 var testDrive1 = mockDrive{
-	"D:/Downloads/Complete":                 []string{"1.mkv", "Arrow.S01E08.rus.LostFilm.TV.avi", "Arrow.S01E09.rus.LostFilm.TV.avi", "Пианистка DVDRip.avi"},
-	"D:/Downloads/Complete/TBBT (S09) 720p": []string{"TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv"},
+	"D:\\Downloads\\Complete":                  []string{"1.mkv", "Arrow.S01E08.rus.LostFilm.TV.avi", "Arrow.S01E09.rus.LostFilm.TV.avi", "Пианистка DVDRip.avi"},
+	"D:\\Downloads\\Complete\\TBBT (S09) 720p": []string{"TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv"},
 }
 
 func TestGetAllFiles(t *testing.T) {

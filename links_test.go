@@ -7,11 +7,11 @@ import (
 )
 
 var testDrive2 = mockDrive{
-	"D:/Downloads/Complete":                 []string{"1.mkv", "Arrow.S01E08.rus.LostFilm.TV.avi", "Arrow.S01E09.rus.LostFilm.TV.avi", "Пианистка DVDRip.avi"},
-	"D:/Downloads/Complete/TBBT (S09) 720p": []string{"TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv"},
-	"D:/Video/Shows/Arrow/Season 1":         []string{"Arrow.S01E08.rus.LostFilm.TV.avi", "Arrow.S01E09.rus.LostFilm.TV.avi"},
-	"D:/Video/Shows/TBBT/Season 9":          []string{"TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv"},
-	"D:/Video/Movies":                       []string{"Пианистка DVDRip.avi"},
+	"D:\\Downloads\\Complete":                  []string{"1.mkv", "Arrow.S01E08.rus.LostFilm.TV.avi", "Arrow.S01E09.rus.LostFilm.TV.avi", "Пианистка DVDRip.avi"},
+	"D:\\Downloads\\Complete\\TBBT (S09) 720p": []string{"TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv"},
+	"D:\\Video\\Shows\\Arrow\\Season 1":        []string{"Arrow.S01E08.rus.LostFilm.TV.avi", "Arrow.S01E09.rus.LostFilm.TV.avi"},
+	"D:\\Video\\Shows\\TBBT\\Season 9":         []string{"TBBT.S09E01.HDTV.720p.KB.[qqss44].mkv", "TBBT.S09E02.HDTV.720p.KB.[qqss44].mkv"},
+	"D:\\Video\\Movies":                        []string{"Пианистка DVDRip.avi"},
 }
 
 func sameFile(fi1, fi2 os.FileInfo) bool {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"path"
 	"path/filepath"
 )
 
@@ -18,11 +17,11 @@ type readDirFunc func(dirname string) ([]os.FileInfo, error)
 type sameFileFunc func(fi1, fi2 os.FileInfo) bool
 
 func (f *fileInfo) getFullName(folder folderInfo) string {
-	return path.Join(append(append(folder.Path, f.Path...), f.Name)...)
+	return filepath.Join(append(append(folder.Path, f.Path...), f.Name)...)
 }
 
 func getAllFiles(reader readDirFunc, folderName string, folderPath []string, dirPath []string, extensions []string) ([]fileInfo, error) {
-	dir := path.Join(append(folderPath, dirPath...)...)
+	dir := filepath.Join(append(folderPath, dirPath...)...)
 	innerFiles, err := reader(dir)
 	if err != nil {
 		return nil, err

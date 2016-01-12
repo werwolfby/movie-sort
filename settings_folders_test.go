@@ -31,7 +31,7 @@ var inputFoldersInitTests = []struct {
 	{config{Paths: configPaths{Source: "D:\\Torrents\\Complete", DestMovies: "D:\\Video\\Movies", DestShows: "D:\\Video\\Shows"}},
 		[]folderInfo{{"Downloads", []string{"D:", "Torrents", "Complete"}}}},
 	{config{Paths: configPaths{Source: "/mnt/media/Torrents/Complete", DestMovies: "/mnt/media/Video/Movies", DestShows: "/mnt/media/Video/Shows"}},
-		[]folderInfo{{"Downloads", []string{"", "mnt", "media", "Torrents", "Complete"}}}},
+		[]folderInfo{{"Downloads", []string{"/mnt", "media", "Torrents", "Complete"}}}},
 }
 
 var outputFoldersInitTests = []struct {
@@ -44,8 +44,8 @@ var outputFoldersInitTests = []struct {
 			{"Shows", []string{"D:", "Video", "Shows"}}}},
 	{config{Paths: configPaths{Source: "/mnt/media/Torrents/Complete", DestMovies: "/mnt/media/Video/Movies", DestShows: "/mnt/media/Video/Shows"}},
 		[]folderInfo{
-			{"Movies", []string{"", "mnt", "media", "Video", "Movies"}},
-			{"Shows", []string{"", "mnt", "media", "Video", "Shows"}}}},
+			{"Movies", []string{"/mnt", "media", "Video", "Movies"}},
+			{"Shows", []string{"/mnt", "media", "Video", "Shows"}}}},
 }
 
 func TestAddPath(t *testing.T) {

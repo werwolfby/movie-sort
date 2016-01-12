@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	pathSep         = "\\/"
 	downloadsFolder = "Downloads"
 	moviesFolder    = "Movies"
 	showsFolder     = "Shows"

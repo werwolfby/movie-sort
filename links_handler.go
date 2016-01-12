@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 const linksAPI = "/api/links"
@@ -69,6 +70,15 @@ func (l *linksHandlers) getPutLinksHandler(link linkFunc) http.Handler {
 		srcPath := inputFileInfo.getFullName(*inputFolderInfo)
 		dstPath := linkFileInfo.getFullName(*outputFolderInfo)
 
+		dstDir := filepath.Dir(dstPath)
+
+		if exists, _ := isDirExists(dstDir); !exists {
+			if e := os.MkdirAll(dstDir, 0755); e != nil {
+				w.WriteHeader(500)
+				return
+			}
+		}
+
 		log.Printf("Make link: %s -> %s", srcPath, dstPath)
 
 		if e := link(srcPath, dstPath); e != nil {
@@ -81,4 +91,15 @@ func (l *linksHandlers) getPutLinksHandler(link linkFunc) http.Handler {
 
 		json.NewEncoder(w).Encode(resultLinkInfo)
 	})
+}
+
+func isDirExists(path string) (bool, error) {
+	stat, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return stat != nil, err
 }

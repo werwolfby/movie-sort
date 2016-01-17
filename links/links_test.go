@@ -97,4 +97,15 @@ func TestUpdateLinks2(t *testing.T) {
 	}
 
 	assert.Equal(t, expectedShows, l.GetShows())
+
+	show, found := l.GetShow("ThE SHoW")
+	assert.True(t, found)
+	assert.Equal(t, expectedShows[0], show)
+
+	show, found = l.GetShow("oThEr SHoW")
+	assert.True(t, found)
+	assert.Equal(t, expectedShows[1], show)
+
+	show, found = l.GetShow("Unknown Show")
+	assert.False(t, found)
 }

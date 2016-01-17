@@ -12,19 +12,19 @@ type FolderNames struct {
 	ShowsName     string
 }
 
-type folderMeta uint32
+type FolderMeta uint32
 
 const (
 	_                              = iota
-	folderMetaDownloads folderMeta = iota
-	folderMetaMovies
-	folderMetaShows
+	FolderMetaDownloads FolderMeta = iota
+	FolderMetaMovies
+	FolderMetaShows
 )
 
 type FolderInfo struct {
-	Name string   `json:"name"`
-	Path []string `json:"path"`
-	meta folderMeta
+	Name string     `json:"name"`
+	Path []string   `json:"path"`
+	Meta FolderMeta `json:"-"`
 }
 
 type GlobalSettings struct {
@@ -92,22 +92,22 @@ func ReadSettings(reader io.Reader) (*ApplicationSettings, error) {
 }
 
 func (h OutputFoldersSettings) GetMovies() []FolderInfo {
-	return h.getFolders(folderMetaMovies)
+	return h.getFolders(FolderMetaMovies)
 }
 
 func (h OutputFoldersSettings) GetShows() []FolderInfo {
-	return h.getFolders(folderMetaShows)
+	return h.getFolders(FolderMetaShows)
 }
 
-func (h *FoldersSettings) addPath(name, path string, meta folderMeta) {
-	f := FolderInfo{Name: name, Path: utils.SplitPath(path), meta: meta}
+func (h *FoldersSettings) addPath(name, path string, meta FolderMeta) {
+	f := FolderInfo{Name: name, Path: utils.SplitPath(path), Meta: meta}
 	h.Folders = append(h.Folders, f)
 }
 
-func (h FoldersSettings) getFolders(meta folderMeta) []FolderInfo {
+func (h FoldersSettings) getFolders(meta FolderMeta) []FolderInfo {
 	var result []FolderInfo
 	for _, folder := range h.Folders {
-		if folder.meta == meta {
+		if folder.Meta == meta {
 			result = append(result, folder)
 		}
 	}

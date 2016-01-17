@@ -4,6 +4,7 @@ import (
 	"github.com/werwolfby/movie-sort/settings"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type FileInfo struct {
@@ -17,16 +18,23 @@ type LinkInfo struct {
 	Links []FileInfo `json:"links"`
 }
 
+type Links interface {
+	UpdateLinks(extensions []string) error
+	GetShows() []string
+	GetLinks() []LinkInfo
+}
+
 type links struct {
 	Reader        LinksReader
 	InputFolders  *settings.InputFoldersSettings
 	OutputFolders *settings.OutputFoldersSettings
 	Links         []LinkInfo
+	Shows         []string
 }
 
-type Links interface {
-	UpdateLinks(extensions []string) error
-	GetLinks() []LinkInfo
+type searchFileInfo struct {
+	FileInfo
+	OsFileInfo os.FileInfo
 }
 
 func NewLinks(r LinksReader, ifs *settings.InputFoldersSettings, ofs *settings.OutputFoldersSettings) Links {
@@ -42,20 +50,54 @@ func (l *links) UpdateLinks(extensions []string) error {
 	if err != nil {
 		return err
 	}
+	showsFolders := l.OutputFolders.GetShows()
+	l.Shows = l.searchShows(showsFolders, outputFiles)
 	l.Links = l.searchLinks(inputFiles, outputFiles)
 	return nil
 }
 
-func (l *links) GetLinks() []LinkInfo {
+func (l links) GetLinks() []LinkInfo {
 	return l.Links
 }
 
-type searchFileInfo struct {
-	FileInfo
-	OsFileInfo os.FileInfo
+func (l links) GetShows() []string {
+	return l.Shows
 }
 
-func (l *links) getAllFiles(folders []settings.FolderInfo, extensions []string) ([]searchFileInfo, error) {
+func (l links) searchShows(folders []settings.FolderInfo, files []searchFileInfo) []string {
+	var shows []string
+	for _, file := range files {
+		showsFolder := false
+		for _, folder := range folders {
+			if file.Folder == folder.Name {
+				showsFolder = true
+				break
+			}
+		}
+		if !showsFolder {
+			continue
+		}
+		var fileShow string
+		if len(file.Path) > 0 && len(file.Path[0]) > 0 {
+			fileShow = file.Path[0]
+		}
+		if fileShow != "" {
+			newShow := true
+			for _, show := range shows {
+				if strings.EqualFold(show, fileShow) {
+					newShow = false
+					break
+				}
+			}
+			if newShow {
+				shows = append(shows, fileShow)
+			}
+		}
+	}
+	return shows
+}
+
+func (l links) getAllFiles(folders []settings.FolderInfo, extensions []string) ([]searchFileInfo, error) {
 	var result []searchFileInfo
 	for _, f := range folders {
 		folderFiles, err := l.getAllFilesFromFolder(f, nil, extensions)
@@ -67,7 +109,7 @@ func (l *links) getAllFiles(folders []settings.FolderInfo, extensions []string) 
 	return result, nil
 }
 
-func (l *links) getAllFilesFromFolder(folder settings.FolderInfo, dirPath []string, extensions []string) ([]searchFileInfo, error) {
+func (l links) getAllFilesFromFolder(folder settings.FolderInfo, dirPath []string, extensions []string) ([]searchFileInfo, error) {
 	dirname := filepath.Join(append(folder.Path, dirPath...)...)
 	files, err := l.Reader.ReadDir(dirname)
 	if err != nil {

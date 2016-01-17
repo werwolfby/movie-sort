@@ -51,7 +51,7 @@ func (c *config) parseGlobalSettings() GlobalSettings {
 func (c *config) parseInputFoldersSettings() InputFoldersSettings {
 	s := InputFoldersSettings{}
 	if c.Paths.Source != "" {
-		s.addPath(c.Names.DownloadsFolder, c.Paths.Source, folderMetaDownloads)
+		s.addPath(c.Names.DownloadsFolder, c.Paths.Source, FolderMetaDownloads)
 	}
 	return s
 }
@@ -59,10 +59,10 @@ func (c *config) parseInputFoldersSettings() InputFoldersSettings {
 func (c *config) parseOutputFoldersSettings() OutputFoldersSettings {
 	s := OutputFoldersSettings{}
 	if c.Paths.DestMovies != "" {
-		s.addPath(c.Names.MoviesFolder, c.Paths.DestMovies, folderMetaMovies)
+		s.addPath(c.Names.MoviesFolder, c.Paths.DestMovies, FolderMetaMovies)
 	}
 	if c.Paths.DestShows != "" {
-		s.addPath(c.Names.ShowsFolder, c.Paths.DestShows, folderMetaShows)
+		s.addPath(c.Names.ShowsFolder, c.Paths.DestShows, FolderMetaShows)
 	}
 	return s
 }

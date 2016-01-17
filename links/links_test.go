@@ -42,7 +42,9 @@ func TestUpdateLinks(t *testing.T) {
 
 	assert.Equal(t, expectedLinks, ls)
 
-	expectedShows := []string{"The Show"}
+	expectedShows := []links.FileInfo{
+		links.FileInfo{Folder: "Shows", Path: []string{}, Name: "The Show"},
+	}
 
 	assert.Equal(t, expectedShows, l.GetShows())
 }
@@ -89,7 +91,10 @@ func TestUpdateLinks2(t *testing.T) {
 
 	assert.Equal(t, expectedLinks, ls)
 
-	expectedShows := []string{"The Show", "Other Show"}
+	expectedShows := []links.FileInfo{
+		links.FileInfo{Folder: "Shows", Path: []string{}, Name: "The Show"},
+		links.FileInfo{Folder: "Shows", Path: []string{}, Name: "Other Show"},
+	}
 
 	assert.Equal(t, expectedShows, l.GetShows())
 }

@@ -20,8 +20,9 @@ type LinkInfo struct {
 
 type Links interface {
 	UpdateLinks(extensions []string) error
-	GetShows() []string
 	GetLinks() []LinkInfo
+	GetShows() []FileInfo
+	GetShow(name string) (FileInfo, bool)
 }
 
 type links struct {
@@ -29,7 +30,7 @@ type links struct {
 	InputFolders  *settings.InputFoldersSettings
 	OutputFolders *settings.OutputFoldersSettings
 	Links         []LinkInfo
-	Shows         []string
+	Shows         []FileInfo
 }
 
 type searchFileInfo struct {
@@ -60,38 +61,47 @@ func (l links) GetLinks() []LinkInfo {
 	return l.Links
 }
 
-func (l links) GetShows() []string {
+func (l links) GetShows() []FileInfo {
 	return l.Shows
 }
 
-func (l links) searchShows(folders []settings.FolderInfo, files []searchFileInfo) []string {
-	var shows []string
+func (l links) GetShow(name string) (FileInfo, bool) {
+	if l.Shows == nil {
+		return FileInfo{}, false
+	}
+	for _, fi := range l.Shows {
+		if strings.EqualFold(fi.Name, name) {
+			return fi, true
+		}
+	}
+	return FileInfo{}, false
+}
+
+func (l links) searchShows(folders []settings.FolderInfo, files []searchFileInfo) []FileInfo {
+	var shows []FileInfo
+MAIN:
 	for _, file := range files {
-		showsFolder := false
+		var showsFolder string
 		for _, folder := range folders {
 			if file.Folder == folder.Name {
-				showsFolder = true
-				break
+				showsFolder = folder.Name
 			}
 		}
-		if !showsFolder {
+		if showsFolder == "" {
 			continue
 		}
-		var fileShow string
+		var fileShowPath []string
 		if len(file.Path) > 0 && len(file.Path[0]) > 0 {
-			fileShow = file.Path[0]
+			fileShowPath = file.Path[:1]
 		}
-		if fileShow != "" {
-			newShow := true
+		if len(fileShowPath) > 0 {
+			fileShow := fileShowPath[len(fileShowPath)-1]
 			for _, show := range shows {
-				if strings.EqualFold(show, fileShow) {
-					newShow = false
-					break
+				if strings.EqualFold(show.Name, fileShow) {
+					continue MAIN
 				}
 			}
-			if newShow {
-				shows = append(shows, fileShow)
-			}
+			shows = append(shows, FileInfo{Folder: showsFolder, Path: fileShowPath[1:], Name: fileShow})
 		}
 	}
 	return shows

@@ -2,7 +2,6 @@ package links
 
 import (
 	"github.com/werwolfby/movie-sort/settings"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -28,52 +27,6 @@ type links struct {
 type Links interface {
 	UpdateLinks(extensions []string) error
 	GetLinks() []LinkInfo
-}
-
-type DirReader interface {
-	ReadDir(dirname string) ([]os.FileInfo, error)
-}
-
-type SameFileComparer interface {
-	SameFile(fi1, fi2 os.FileInfo) bool
-}
-
-type DirMaker interface {
-	MkdirAll(dirname string) error
-}
-
-type Linker interface {
-	Link(oldname, newname string) error
-}
-
-type LinksReader interface {
-	DirReader
-	SameFileComparer
-	DirMaker
-	Linker
-}
-
-type OsLinksReader struct {
-}
-
-func (OsLinksReader) ReadDir(dirname string) ([]os.FileInfo, error) {
-	return ioutil.ReadDir(dirname)
-}
-
-func (OsLinksReader) SameFile(fi1, fi2 os.FileInfo) bool {
-	return os.SameFile(fi1, fi2)
-}
-
-func (OsLinksReader) MkdirAll(dirname string) error {
-	return os.MkdirAll(dirname, 0755)
-}
-
-func (OsLinksReader) Link(oldname, newname string) error {
-	return os.Link(oldname, newname)
-}
-
-func NewLinksReader() LinksReader {
-	return OsLinksReader{}
 }
 
 func NewLinks(r LinksReader, ifs *settings.InputFoldersSettings, ofs *settings.OutputFoldersSettings) Links {

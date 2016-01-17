@@ -35,18 +35,14 @@ func readConfig(reader io.Reader) (*config, error) {
 	if e := gcfg.ReadInto(cfg, reader); e != nil {
 		return nil, e
 	}
-	cfg.setDefaultValues()
-	return cfg, nil
-}
-
-func (c *config) setDefaultValues() {
-	if (c.Names == configNames{}) {
-		c.Names = configNames{
+	if (cfg.Names == configNames{}) {
+		cfg.Names = configNames{
 			DownloadsFolder: "Downloads",
 			MoviesFolder:    "Movies",
 			ShowsFolder:     "Shows",
 		}
 	}
+	return cfg, nil
 }
 
 func (c *config) parseGlobalSettings() GlobalSettings {

@@ -2,7 +2,6 @@ package settings
 
 import (
 	"fmt"
-	"github.com/werwolfby/movie-sort/utils"
 	"gopkg.in/gcfg.v1"
 	"io"
 	"os"
@@ -52,7 +51,7 @@ func (c *config) parseGlobalSettings() GlobalSettings {
 func (c *config) parseInputFoldersSettings() InputFoldersSettings {
 	s := InputFoldersSettings{}
 	if c.Paths.Source != "" {
-		s.addPath(c.Names.DownloadsFolder, c.Paths.Source)
+		s.addPath(c.Names.DownloadsFolder, c.Paths.Source, folderMetaDownloads)
 	}
 	return s
 }
@@ -60,15 +59,10 @@ func (c *config) parseInputFoldersSettings() InputFoldersSettings {
 func (c *config) parseOutputFoldersSettings() OutputFoldersSettings {
 	s := OutputFoldersSettings{}
 	if c.Paths.DestMovies != "" {
-		s.addPath(c.Names.MoviesFolder, c.Paths.DestMovies)
+		s.addPath(c.Names.MoviesFolder, c.Paths.DestMovies, folderMetaMovies)
 	}
 	if c.Paths.DestShows != "" {
-		s.addPath(c.Names.ShowsFolder, c.Paths.DestShows)
+		s.addPath(c.Names.ShowsFolder, c.Paths.DestShows, folderMetaShows)
 	}
 	return s
-}
-
-func (h *FoldersSettings) addPath(name, path string) {
-	f := FolderInfo{Name: name, Path: utils.SplitPath(path)}
-	h.Folders = append(h.Folders, f)
 }

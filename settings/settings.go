@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"github.com/werwolfby/movie-sort/utils"
 	"io"
 	"os"
 )
@@ -11,9 +12,19 @@ type FolderNames struct {
 	ShowsName     string
 }
 
+type folderMeta uint32
+
+const (
+	_                              = iota
+	folderMetaDownloads folderMeta = iota
+	folderMetaMovies
+	folderMetaShows
+)
+
 type FolderInfo struct {
 	Name string   `json:"name"`
 	Path []string `json:"path"`
+	meta folderMeta
 }
 
 type GlobalSettings struct {
@@ -78,4 +89,27 @@ func ReadSettings(reader io.Reader) (*ApplicationSettings, error) {
 		},
 	}
 	return &s, nil
+}
+
+func (h OutputFoldersSettings) GetMovies() []FolderInfo {
+	return h.getFolders(folderMetaMovies)
+}
+
+func (h OutputFoldersSettings) GetShows() []FolderInfo {
+	return h.getFolders(folderMetaShows)
+}
+
+func (h *FoldersSettings) addPath(name, path string, meta folderMeta) {
+	f := FolderInfo{Name: name, Path: utils.SplitPath(path), meta: meta}
+	h.Folders = append(h.Folders, f)
+}
+
+func (h FoldersSettings) getFolders(meta folderMeta) []FolderInfo {
+	var result []FolderInfo
+	for _, folder := range h.Folders {
+		if folder.meta == meta {
+			result = append(result, folder)
+		}
+	}
+	return result
 }

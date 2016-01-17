@@ -9,15 +9,15 @@ import (
 	"testing"
 )
 
-var config1 = `
+func TestReadSettingsPaths(t *testing.T) {
+	var config = `
 [paths]
 src         = "/mnt/media/Torrents/Complete"
 dest-movies = "/mnt/media/Video/Movies"
 dest-shows  = "/mnt/media/Video/Shows"    
 `
 
-func TestReadSettingsPaths(t *testing.T) {
-	r := strings.NewReader(config1)
+	r := strings.NewReader(config)
 	s, e := settings.ReadSettings(r)
 
 	assert.Nil(t, e)
@@ -41,18 +41,21 @@ func TestReadSettingsPaths(t *testing.T) {
 	assert.Equal(t, "Movies", s.FolderNames.MoviesName)
 	assert.Equal(t, "Shows", s.FolderNames.ShowsName)
 
+	assert.Equal(t, []settings.FolderInfo{s.OutputFolders.Folders[0]}, s.OutputFolders.GetMovies())
+	assert.Equal(t, []settings.FolderInfo{s.OutputFolders.Folders[1]}, s.OutputFolders.GetShows())
+
 	assert.Empty(t, s.Services.GuessItURL)
 }
 
-var config2 = `
+func TestReadSettingsNames(t *testing.T) {
+	var config = `
 [names]
 downloads = "downloads"
 movies    = "movies"
 shows     = "shows"
 `
 
-func TestReadSettingsNames(t *testing.T) {
-	r := strings.NewReader(config2)
+	r := strings.NewReader(config)
 	s, e := settings.ReadSettings(r)
 
 	assert.Nil(t, e)
@@ -70,13 +73,13 @@ func TestReadSettingsNames(t *testing.T) {
 	assert.Empty(t, s.Services.GuessItURL)
 }
 
-var config3 = `
+func TestReadSettingsServices(t *testing.T) {
+	var config = `
 [services]
 guessit = "http://localhost:5000/guessit"
 `
 
-func TestReadSettingsServices(t *testing.T) {
-	r := strings.NewReader(config3)
+	r := strings.NewReader(config)
 	s, e := settings.ReadSettings(r)
 
 	assert.Nil(t, e)

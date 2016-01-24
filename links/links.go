@@ -29,6 +29,8 @@ type LinkInfo struct {
 type Folders interface {
 	GetShowsFolder() (settings.FolderInfo, bool)
 	GetMoviesFolder() (settings.FolderInfo, bool)
+	GetShow(name string) (FileInfo, bool)
+	GetShows() []FileInfo
 	GetShowSeason(name string, season int) (FileInfo, int)
 }
 
@@ -96,9 +98,6 @@ func (l links) GetMoviesFolder() (settings.FolderInfo, bool) {
 }
 
 func (l links) GetShow(name string) (FileInfo, bool) {
-	if l.Shows == nil {
-		return FileInfo{}, false
-	}
 	for _, fi := range l.Shows {
 		if strings.EqualFold(fi.Name, name) {
 			return fi, true
@@ -108,9 +107,6 @@ func (l links) GetShow(name string) (FileInfo, bool) {
 }
 
 func (l links) GetShowSeason(name string, season int) (FileInfo, int) {
-	if l.Shows == nil {
-		return FileInfo{}, ShowNotFound
-	}
 	for _, fi := range l.Shows {
 		if strings.EqualFold(fi.Name, name) {
 			seasonFileInfo, found := l.ShowsSeasons[fi.Name][season]

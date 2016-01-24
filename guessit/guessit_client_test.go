@@ -83,6 +83,14 @@ func (m mockLinks) GetShowSeason(name string, season int) (links.FileInfo, int) 
 	return m.GetShowSeasonFileInfo, m.GetShowSeasonSeason
 }
 
+func (m mockLinks) GetShow(name string) (links.FileInfo, bool) {
+	return m.GetShowSeasonFileInfo, m.GetShowSeasonSeason > 0
+}
+
+func (m mockLinks) GetShows() []links.FileInfo {
+	return []links.FileInfo{}
+}
+
 func TestGuessExistingSeasonLink(t *testing.T) {
 	resp := guessitResponse{Type: "episode", Title: "Test", Season: 3, SomeotherField: "AsdF"}
 	var client = httptest.NewServer(handleGuess(resp))

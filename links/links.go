@@ -4,7 +4,15 @@ import (
 	"github.com/werwolfby/movie-sort/settings"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"unicode"
+)
+
+const (
+	seasonPrefix   = "Season "
+	SeasonNotFound = -1
+	ShowNotFound   = -2
 )
 
 type FileInfo struct {
@@ -18,11 +26,16 @@ type LinkInfo struct {
 	Links []FileInfo `json:"links"`
 }
 
+type Folders interface {
+	GetShowsFolder() (settings.FolderInfo, bool)
+	GetMoviesFolder() (settings.FolderInfo, bool)
+	GetShowSeason(name string, season int) (FileInfo, int)
+}
+
 type Links interface {
+	Folders
 	UpdateLinks(extensions []string) error
 	GetLinks() []LinkInfo
-	GetShows() []FileInfo
-	GetShow(name string) (FileInfo, bool)
 }
 
 type links struct {
@@ -31,6 +44,7 @@ type links struct {
 	OutputFolders *settings.OutputFoldersSettings
 	Links         []LinkInfo
 	Shows         []FileInfo
+	ShowsSeasons  map[string]map[int]FileInfo
 }
 
 type searchFileInfo struct {
@@ -52,7 +66,7 @@ func (l *links) UpdateLinks(extensions []string) error {
 		return err
 	}
 	showsFolders := l.OutputFolders.GetShows()
-	l.Shows = l.searchShows(showsFolders, outputFiles)
+	l.Shows, l.ShowsSeasons = l.searchShows(showsFolders, outputFiles)
 	l.Links = l.searchLinks(inputFiles, outputFiles)
 	return nil
 }
@@ -63,6 +77,22 @@ func (l links) GetLinks() []LinkInfo {
 
 func (l links) GetShows() []FileInfo {
 	return l.Shows
+}
+
+func (l links) GetShowsFolder() (settings.FolderInfo, bool) {
+	shows := l.OutputFolders.GetShows()
+	if len(shows) == 0 {
+		return settings.FolderInfo{}, false
+	}
+	return shows[0], true
+}
+
+func (l links) GetMoviesFolder() (settings.FolderInfo, bool) {
+	movies := l.OutputFolders.GetMovies()
+	if len(movies) == 0 {
+		return settings.FolderInfo{}, false
+	}
+	return movies[0], true
 }
 
 func (l links) GetShow(name string) (FileInfo, bool) {
@@ -77,34 +107,77 @@ func (l links) GetShow(name string) (FileInfo, bool) {
 	return FileInfo{}, false
 }
 
-func (l links) searchShows(folders []settings.FolderInfo, files []searchFileInfo) []FileInfo {
-	var shows []FileInfo
-MAIN:
+func (l links) GetShowSeason(name string, season int) (FileInfo, int) {
+	if l.Shows == nil {
+		return FileInfo{}, ShowNotFound
+	}
+	for _, fi := range l.Shows {
+		if strings.EqualFold(fi.Name, name) {
+			seasonFileInfo, found := l.ShowsSeasons[fi.Name][season]
+			if !found {
+				return fi, SeasonNotFound
+			}
+			return seasonFileInfo, season
+		}
+	}
+	return FileInfo{}, ShowNotFound
+}
+
+func (l links) searchShows(folders []settings.FolderInfo, files []searchFileInfo) (shows []FileInfo, showsSeasons map[string]map[int]FileInfo) {
 	for _, file := range files {
 		var showsFolder string
 		for _, folder := range folders {
 			if file.Folder == folder.Name {
 				showsFolder = folder.Name
+				break
 			}
 		}
-		if showsFolder == "" {
+		if showsFolder == "" || len(file.Path) == 0 || len(file.Path[0]) == 0 {
 			continue
 		}
-		var fileShowPath []string
-		if len(file.Path) > 0 && len(file.Path[0]) > 0 {
-			fileShowPath = file.Path[:1]
-		}
-		if len(fileShowPath) > 0 {
-			fileShow := fileShowPath[len(fileShowPath)-1]
-			for _, show := range shows {
-				if strings.EqualFold(show.Name, fileShow) {
-					continue MAIN
-				}
+		fileShowPath := file.Path[1:]
+		fileShow := file.Path[0]
+
+		var foundShowName string
+		for _, show := range shows {
+			if strings.EqualFold(show.Name, fileShow) {
+				foundShowName = show.Name
+				break
 			}
-			shows = append(shows, FileInfo{Folder: showsFolder, Path: fileShowPath[1:], Name: fileShow})
 		}
+		if foundShowName == "" {
+			shows = append(shows, FileInfo{Folder: showsFolder, Path: []string{}, Name: fileShow})
+			foundShowName = fileShow
+		}
+		if len(fileShowPath) < 1 {
+			continue
+		}
+		seasonDir := fileShowPath[0]
+		// season dir have to be path like "Season %d+"
+		if len(seasonDir) < len(seasonPrefix)+1 || !strings.EqualFold(seasonPrefix, seasonDir[0:len(seasonPrefix)]) {
+			continue
+		}
+		i := len(seasonPrefix)
+		for ; i < len(seasonDir); i++ {
+			if !unicode.IsSpace([]rune(seasonDir)[i]) {
+				break
+			}
+		}
+		seasonNumber, err := strconv.Atoi(seasonDir[i:])
+		if err != nil || seasonNumber < 0 {
+			continue
+		}
+		if showsSeasons == nil {
+			showsSeasons = make(map[string]map[int]FileInfo)
+		}
+		showSeasons, found := showsSeasons[foundShowName]
+		if !found {
+			showSeasons = make(map[int]FileInfo)
+			showsSeasons[foundShowName] = showSeasons
+		}
+		showSeasons[seasonNumber] = FileInfo{Folder: showsFolder, Path: []string{seasonDir}, Name: foundShowName}
 	}
-	return shows
+	return
 }
 
 func (l links) getAllFiles(folders []settings.FolderInfo, extensions []string) ([]searchFileInfo, error) {

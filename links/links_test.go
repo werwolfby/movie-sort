@@ -108,4 +108,29 @@ func TestUpdateLinks2(t *testing.T) {
 
 	show, found = l.GetShow("Unknown Show")
 	assert.False(t, found)
+
+	expectedSeasons := []links.FileInfo{
+		links.FileInfo{Folder: "Shows", Path: []string{"Season 3"}, Name: "The Show"},
+		expectedShows[1],
+	}
+
+	var season int
+	show, season = l.GetShowSeason("ThE SHoW", 2)
+	assert.Equal(t, -1, season)
+	// Show folder without seasons
+	assert.Equal(t, expectedShows[0], show)
+
+	show, season = l.GetShowSeason("oThEr SHoW", 2)
+	assert.Equal(t, -1, season)
+	// Show folder without seasons
+	assert.Equal(t, expectedShows[1], show)
+
+	show, season = l.GetShowSeason("Unknown Show", 1)
+	assert.Equal(t, -2, season)
+	// Show folder without seasons
+	assert.Equal(t, links.FileInfo{}, show)
+
+	show, season = l.GetShowSeason("ThE SHoW", 3)
+	assert.Equal(t, 3, season)
+	assert.Equal(t, expectedSeasons[0], show)
 }

@@ -1,6 +1,7 @@
 package links
 
 import (
+	"errors"
 	"github.com/werwolfby/movie-sort/settings"
 	"os"
 	"path/filepath"
@@ -38,6 +39,7 @@ type Links interface {
 	Folders
 	UpdateLinks(extensions []string) error
 	GetLinks() []LinkInfo
+	Link(oldname, newname FileInfo) (LinkInfo, error)
 }
 
 type links struct {
@@ -117,6 +119,76 @@ func (l links) GetShowSeason(name string, season int) (FileInfo, int) {
 		}
 	}
 	return FileInfo{}, ShowNotFound
+}
+
+func (l links) Link(oldname, newname FileInfo) (LinkInfo, error) {
+	inputFolder, found := l.InputFolders.Find(oldname.Folder)
+	if !found {
+		return LinkInfo{}, errors.New("Can't find input folder: " + oldname.Folder)
+	}
+	outputFolder, found := l.OutputFolders.Find(newname.Folder)
+	if !found {
+		return LinkInfo{}, errors.New("Can't find output folder: " + newname.Folder)
+	}
+
+	oldlink := l.findLink(oldname)
+	if oldlink == nil {
+		return LinkInfo{}, errors.New("Can't find source link")
+	}
+
+	oldpath := getFullPath(inputFolder, oldname)
+	newpath := getFullPath(outputFolder, newname)
+
+	newdir := filepath.Dir(newpath)
+	if exists, _ := isDirExists(newdir); !exists {
+		if e := l.Reader.MkdirAll(newdir); e != nil {
+			return LinkInfo{}, e
+		}
+	}
+
+	if e := l.Reader.Link(oldpath, newpath); e != nil {
+		return LinkInfo{}, e
+	}
+
+	oldlink.Links = append(oldlink.Links, newname)
+
+	return *oldlink, nil
+}
+
+func (l *links) findLink(file FileInfo) *LinkInfo {
+	for i, link := range l.Links {
+		if link.FileInfo.Folder == file.Folder && pathEqual(link.FileInfo.Path, file.Path) && link.FileInfo.Name == file.Name {
+			return &l.Links[i]
+		}
+	}
+	return nil
+}
+
+func pathEqual(path1, path2 []string) bool {
+	if len(path1) != len(path2) {
+		return false
+	}
+	for i, p := range path1 {
+		if p != path2[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func getFullPath(folder settings.FolderInfo, file FileInfo) string {
+	return filepath.Join(append(append(folder.Path, file.Path...), file.Name)...)
+}
+
+func isDirExists(path string) (bool, error) {
+	stat, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return stat != nil, err
 }
 
 func (l links) searchShows(folders []settings.FolderInfo, files []searchFileInfo) (shows []FileInfo, showsSeasons map[string]map[int]FileInfo) {

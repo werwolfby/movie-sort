@@ -99,6 +99,15 @@ func (h OutputFoldersSettings) GetShows() []FolderInfo {
 	return h.getFolders(FolderMetaShows)
 }
 
+func (h FoldersSettings) Find(name string) (FolderInfo, bool) {
+	for _, folder := range h.Folders {
+		if folder.Name == name {
+			return folder, true
+		}
+	}
+	return FolderInfo{}, false
+}
+
 func (h *FoldersSettings) addPath(name, path string, meta FolderMeta) {
 	f := FolderInfo{Name: name, Path: utils.SplitPath(path), Meta: meta}
 	h.Folders = append(h.Folders, f)

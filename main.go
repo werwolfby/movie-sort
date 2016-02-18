@@ -57,7 +57,7 @@ func main() {
 	r.Handle("/api/settings/output-folders", sh.GetOutputFoldersSettingsHandler()).Methods("GET")
 
 	r.Handle("/api/links", lh.GetHandler()).Methods("GET")
-	//r.Handle("/api/links/{path:.*}", lh.getPutLinksHandler(os.Link)).Methods("PUT")
+	r.Handle("/api/links/{path:.*}", lh.GetPutHandler()).Methods("PUT")
 
 	r.Handle("/api/guess/{path:.*}", gh.GetHandler())
 

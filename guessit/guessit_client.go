@@ -58,21 +58,28 @@ func (g guessItService) GuessLink(filename string) (*links.FileInfo, error) {
 		if season == links.ShowNotFound {
 			showsFolder, set := g.folders.GetShowsFolder()
 			if !set {
-				return nil, errors.New("Shows folders doens't set")
+				return nil, errors.New("Shows folders doesn't set")
 			}
 			title := res.Title
 			seasonPath := fmt.Sprintf("Season %d", res.Season)
 			fileInfo = &links.FileInfo{Folder: showsFolder.Name, Path: []string{title, seasonPath}, Name: filename}
 		} else if season == links.SeasonNotFound {
 			seasonPath := fmt.Sprintf("Season %d", res.Season)
-			fileInfo = &links.FileInfo{Folder: show.Folder, Path: append(show.Path, show.Name, seasonPath), Name: filename}
+			path := make([]string, 0, len(show.Path)+2)
+			path = append(path, show.Name)
+			path = append(path, show.Path...)
+			path = append(path, seasonPath)
+			fileInfo = &links.FileInfo{Folder: show.Folder, Path: path, Name: filename}
 		} else {
-			fileInfo = &links.FileInfo{Folder: show.Folder, Path: append(show.Path, show.Name), Name: filename}
+			path := make([]string, 0, len(show.Path)+1)
+			path = append(path, show.Name)
+			path = append(path, show.Path...)
+			fileInfo = &links.FileInfo{Folder: show.Folder, Path: path, Name: filename}
 		}
 	} else {
 		moviesFolder, set := g.folders.GetMoviesFolder()
 		if !set {
-			return nil, errors.New("Movies folders doens't set")
+			return nil, errors.New("Movies folders doesn't set")
 		}
 		fileInfo = &links.FileInfo{Folder: moviesFolder.Name, Path: []string{}, Name: filename}
 	}

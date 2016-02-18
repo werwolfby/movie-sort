@@ -3,6 +3,10 @@ package main
 import (
 	"errors"
 	"github.com/gorilla/mux"
+	"github.com/werwolfby/movie-sort/guessit"
+	"github.com/werwolfby/movie-sort/links"
+	"github.com/werwolfby/movie-sort/server"
+	"github.com/werwolfby/movie-sort/settings"
 	"log"
 	"net/http"
 	"os"
@@ -33,32 +37,34 @@ func (d indexIfNotExist) Open(name string) (http.File, error) {
 }
 
 func main() {
-	c, e := readConfig("config.ini")
+	s, e := settings.ReadSettingsFromFile("config.ini")
 	if e != nil {
 		log.Fatal(e)
 	}
 
-	s := newSettings(c)
-	g := newGuessItService(c)
-	l := newLinks(s)
-	sh := newSettingsHandler(s)
-	lh := newLinksHandlers(l)
-	gh := newGuessitHandler(s, g)
+	lr := links.NewLinksReader()
+	l := links.NewLinks(lr, &s.InputFolders, &s.OutputFolders)
+	g := guessit.NewGuessItService(s.Services.GuessItURL, l)
+
+	sh := server.NewSettingsHandlers(s)
+	lh := server.NewLinksHandlers(l)
+	gh := server.NewGuessitHandlers(g, l)
 
 	r := mux.NewRouter()
 
-	r.Handle("/api/settings", sh.getGlobalSettingsHandler()).Methods("GET")
-	r.Handle("/api/settings/input-folders", sh.getInputFoldersSettingsHandler()).Methods("GET")
-	r.Handle("/api/settings/output-folders", sh.getOutputFoldersSettingsHandler()).Methods("GET")
+	r.Handle("/api/settings", sh.GetGlobalSettingsHandler()).Methods("GET")
+	r.Handle("/api/settings/input-folders", sh.GetInputFoldersSettingsHandler()).Methods("GET")
+	r.Handle("/api/settings/output-folders", sh.GetOutputFoldersSettingsHandler()).Methods("GET")
 
-	r.Handle("/api/links", lh.getLinksHandler()).Methods("GET")
-	r.Handle("/api/links/{path:.*}", lh.getPutLinksHandler(os.Link)).Methods("PUT")
+	r.Handle("/api/links", lh.GetHandler()).Methods("GET")
+	r.Handle("/api/links/{path:.*}", lh.GetPutHandler()).Methods("PUT")
 
-	r.Handle("/api/guess/{folder}/{path:.*}", gh.getHandler())
+	r.Handle("/api/guess/{path:.*}", gh.GetHandler())
 
 	r.PathPrefix("/").Handler(http.FileServer(indexIfNotExist("static")))
 
 	http.Handle("/", r)
+
 	log.Println("Starting server on http://localhost:88")
 	log.Fatal(http.ListenAndServe(":88", nil))
 }

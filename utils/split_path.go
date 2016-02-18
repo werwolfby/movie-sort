@@ -1,4 +1,4 @@
-package main
+package utils
 
 import "strings"
 
@@ -6,7 +6,7 @@ const (
 	pathSep = "\\/"
 )
 
-func splitPath(s string) []string {
+func SplitPath(s string) []string {
 	f := func(r rune) bool {
 		for _, c := range pathSep {
 			if r == c {

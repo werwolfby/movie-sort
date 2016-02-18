@@ -65,8 +65,6 @@ func main() {
 
 	http.Handle("/", r)
 
-	l.UpdateLinks([]string{"mkv", "avi", "mp4"})
-
 	log.Println("Starting server on http://localhost:88")
 	log.Fatal(http.ListenAndServe(":88", nil))
 }

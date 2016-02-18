@@ -18,6 +18,7 @@ func NewLinksHandlers(l links.Links) *LinksHandlers {
 
 func (l LinksHandlers) GetHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		l.links.UpdateLinks([]string{"mkv", "avi", "mp4"})
 		writeOk(w, l.links.GetLinks())
 	})
 }

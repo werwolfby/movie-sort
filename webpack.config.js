@@ -28,6 +28,26 @@ module.exports = {
         "window.jQuery": "jquery"
     }),
     new ExtractTextPlugin('[name].css'),
+    new webpack.optimize.UglifyJsPlugin({
+        // to debug prod builds uncomment //debug lines and comment //prod lines
+
+        // beautify: true,//debug
+        // mangle: false,//debug
+        // dead_code: false,//debug
+        // unused: false,//debug
+        // deadCode: false,//debug
+        // compress : { screw_ie8 : true, keep_fnames: true, drop_debugger: false, dead_code: false, unused: false, }, // debug
+        // comments: true,//debug
+
+        beautify: false,//prod
+        // disable mangling because of a bug in angular2 beta.1, beta.2 and beta.3
+        // TODO(mastertinner): enable mangling as soon as angular2 beta.4 is out
+        // mangle: { screw_ie8 : true },//prod
+        mangle: false,
+        compress : { screw_ie8 : true},//prod
+        comments: false//prod
+
+    })
   ],
 
   resolve: {

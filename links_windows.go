@@ -11,7 +11,7 @@ func searchHardLinks(reader readDirFunc, sameFile sameFileFunc, inputFolders []f
 	for i, inputFile := range inputFiles {
 		var links []fileInfo
 		for _, outputFile := range outputFiles {
-			if sameFile(inputFile.osFileInfo, outputFile.osFileInfo) {
+			if inputFile.osFileInfo.Size() == outputFile.osFileInfo.Size() && sameFile(inputFile.osFileInfo, outputFile.osFileInfo) {
 				links = append(links, outputFile.myFileInfo)
 			}
 		}

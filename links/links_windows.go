@@ -7,7 +7,8 @@ func (l *links) searchLinks(inputFiles []searchFileInfo, outputFiles []searchFil
 	for i, isfi := range inputFiles {
 		var links []FileInfo
 		for _, osfi := range outputFiles {
-			if l.Reader.SameFile(isfi.OsFileInfo, osfi.OsFileInfo) {
+			// Check for size before SameFile is just a small optimization
+			if isfi.OsFileInfo.Size() == osfi.OsFileInfo.Size() && l.Reader.SameFile(isfi.OsFileInfo, osfi.OsFileInfo) {
 				links = append(links, osfi.FileInfo)
 			}
 		}

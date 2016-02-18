@@ -21,12 +21,12 @@ func (h SettingsHandlers) GetGlobalSettingsHandler() http.Handler {
 
 func (h SettingsHandlers) GetInputFoldersSettingsHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		writeOk(w, h.settings.InputFolders)
+		writeOk(w, h.settings.InputFolders.Folders)
 	})
 }
 
 func (h SettingsHandlers) GetOutputFoldersSettingsHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		writeOk(w, h.settings.OutputFolders)
+		writeOk(w, h.settings.OutputFolders.Folders)
 	})
 }

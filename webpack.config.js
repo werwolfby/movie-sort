@@ -14,6 +14,10 @@ module.exports = {
     path: "./webapp",
     filename: "[name].js"
   },
+  externals: {
+    "jquery": "jQuery",
+    "bootstrap": "jQuery"
+  },
   debug: true,
   devtool: 'source-map',
   plugins: [

@@ -7,5 +7,4 @@ import 'angular2/router';
 
 require('jquery');
 require('bootstrap');
-require('bootstrap/dist/css/bootstrap.min.css');
 require('./../css/app.css');

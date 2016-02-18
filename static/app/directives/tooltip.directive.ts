@@ -1,5 +1,7 @@
 import {Directive, ElementRef, OnInit, OnDestroy} from "angular2/core";
 
+declare var $: any;
+
 @Directive({
     selector: '[tooltip]'
 })

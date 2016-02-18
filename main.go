@@ -61,7 +61,7 @@ func main() {
 
 	r.Handle("/api/guess/{path:.*}", gh.GetHandler())
 
-	r.PathPrefix("/").Handler(http.FileServer(indexIfNotExist("static")))
+	r.PathPrefix("/").Handler(http.FileServer(indexIfNotExist("webapp")))
 
 	http.Handle("/", r)
 

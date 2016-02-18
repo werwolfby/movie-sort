@@ -11,6 +11,8 @@ import "rxjs/add/operator/combineLatest";
 const showsFolder = "Shows";
 const moviesFolder = "Movies";
 
+declare var $: any;
+
 @Component({
     selector: 'ms-guess-it',
     template: `

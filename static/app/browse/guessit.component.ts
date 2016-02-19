@@ -3,13 +3,11 @@ import {FileInfo, FileLinkInfo, BrowseService} from "./browse.service";
 import {GuessitService} from "./guessit.service";
 import {FileInfoComponent} from "./fileInfo.component";
 import {SettingsService, Settings, FolderInfo} from "../root/settings.service";
-import {TooltipDirective} from "../directives/tooltip.directive";
 import {Observable} from "rxjs/Observable";
 import {BehaviorSubject} from "rxjs/subject/BehaviorSubject";
 import "rxjs/add/operator/combineLatest";
 
-const showsFolder = "Shows";
-const moviesFolder = "Movies";
+declare var $: any;
 
 @Component({
     selector: 'ms-guess-it',
@@ -67,7 +65,7 @@ const moviesFolder = "Movies";
     </div>
     `,
     providers: [GuessitService],
-    directives: [TooltipDirective, FileInfoComponent]
+    directives: [FileInfoComponent]
 })
 export class GuessItComponent implements OnInit {
     @Input() file: FileLinkInfo;

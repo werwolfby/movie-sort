@@ -74,6 +74,11 @@ module.exports = {
   },
 
   devServer: {
-    historyApiFallback: false
+    historyApiFallback: true,
+    proxy: {
+      '/api/*': {
+        target: 'http://localhost:88/'
+      }
+    }
   }
 };

@@ -16,7 +16,11 @@ module.exports = {
   },
   externals: {
     "jquery": "jQuery",
-    "bootstrap": "jQuery"
+    "bootstrap": "jQuery",
+    'angular2/platform/browser': 'ng.platform.browser',
+    'angular2/core': 'ng.core',
+    'angular2/http': 'ng.http',
+    'angular2/router': 'ng.router'
   },
   debug: true,
   devtool: 'source-map',
@@ -31,7 +35,7 @@ module.exports = {
         jQuery: "jquery",
         "window.jQuery": "jquery"
     }),
-    new ExtractTextPlugin('[name].css'),
+    new ExtractTextPlugin('[name].css')/*,
     new webpack.optimize.UglifyJsPlugin({
         // to debug prod builds uncomment //debug lines and comment //prod lines
 
@@ -51,7 +55,7 @@ module.exports = {
         compress : { screw_ie8 : true},//prod
         comments: false//prod
 
-    })
+    })*/
   ],
 
   resolve: {

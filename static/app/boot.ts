@@ -5,6 +5,8 @@ import {enableProdMode}   from "angular2/core";
 
 import {AppComponent} from "./root/app.component";
 
+import './../css/app.css';
+
 enableProdMode();
 
 bootstrap(AppComponent, [ROUTER_PROVIDERS, HTTP_PROVIDERS]);

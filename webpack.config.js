@@ -5,10 +5,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   entry: {
-    'app': './static/app/boot.ts',
-    'vendor': [
-        './static/app/vendor.ts'
-    ]
+    'app': './static/app/boot.ts'
   },
   output: {
     path: "./webapp",
@@ -25,7 +22,6 @@ module.exports = {
   debug: true,
   devtool: 'source-map',
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
     new HtmlWebpackPlugin({
         template: "./static/index.html",
         inject: "body"

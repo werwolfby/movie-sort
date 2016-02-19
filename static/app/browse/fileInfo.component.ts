@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from "angular2/core";
 import {FileInfo} from "./browse.service";
 import {Settings, FolderInfo, SettingsService} from "../root/settings.service";
+import {TooltipDirective} from "../directives/tooltip.directive";
 import {Observable} from "rxjs/Observable";
 import {BehaviorSubject} from "rxjs/subject/BehaviorSubject";
 import "rxjs/add/operator/concat";
@@ -14,7 +15,8 @@ interface FilePath {
 
 @Component({
     selector: 'file-info',
-    template: `<span class="folder-path text-primary" *ngIf="!displayName.isAbsolute" [title]="displayName.absoluteFolderPath">{{displayName.folderName}}{{settings.pathSeparator}}</span><span *ngIf="displayName.isAbsolute">{{displayName.absoluteFolderPath}}{{settings.pathSeparator}}</span><span>{{displayName.filePath}}</span>`
+    template: `<span class="folder-path text-primary" *ngIf="!displayName.isAbsolute" [msTooltip]="displayName.absoluteFolderPath">{{displayName.folderName}}{{settings.pathSeparator}}</span><span *ngIf="displayName.isAbsolute">{{displayName.absoluteFolderPath}}{{settings.pathSeparator}}</span><span>{{displayName.filePath}}</span>`,
+    directives: [TooltipDirective]
 })
 export class FileInfoComponent implements OnInit {
     private _file : BehaviorSubject<FileInfo> = new BehaviorSubject<FileInfo>(null);

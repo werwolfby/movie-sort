@@ -8,9 +8,6 @@ import {Observable} from "rxjs/Observable";
 import {BehaviorSubject} from "rxjs/subject/BehaviorSubject";
 import "rxjs/add/operator/combineLatest";
 
-const showsFolder = "Shows";
-const moviesFolder = "Movies";
-
 declare var $: any;
 
 @Component({
